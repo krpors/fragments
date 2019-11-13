@@ -3,7 +3,13 @@ require "pgen"
 pgen = ParticleGenerator:new(200, 200)
 paused = false
 
+globals = {
+	gamefont = nil
+}
+
 function love.load()
+	local glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-=_+|/\\:;'\"<>,.?"
+	globals.gameFont = love.graphics.newImageFont("font.png", glyphs, 2)
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	love.mouse.setVisible(false)
 	pgen:init()
@@ -21,6 +27,10 @@ end
 
 function love.draw()
 	pgen:draw()
+
+	love.graphics.setFont(globals.gameFont)
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.print("The most important part is nothing.", 0, 12)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)

@@ -65,6 +65,10 @@ function ParticleGenerator:update(dt)
 			p.y = p.y + p.dy * dt
 			p.dy = p.dy - 5
 
+			if p.x <= 0 or p.x >= love.graphics.getWidth() then
+				p.dx = -p.dx
+			end
+
 			p.color = {
 				1,
 				1 - lifepercentage,
