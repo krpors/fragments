@@ -1,20 +1,41 @@
 ParticleGenerator = {}
 ParticleGenerator.__index = ParticleGenerator
 
-function ParticleGenerator:new(origin_x, origin_y)
+function ParticleGenerator:new()
 	local self = setmetatable({}, ParticleGenerator)
 
 	-- Spawn point, or just the origin of the generator
-	self.pos = {
-		x = origin_x,
-		y = origin_y
+	self.origin = { 0, 0 }
+
+	-- The 'spread' or distributions in the x (left, right)
+	-- and y (top, bottom) axes.
+	self.delta = {
+		x = { -80, 80 },
+		y = { -80, 80 },
 	}
+
+	-- 'Gravity' modifier. 0 will disable gravity
+	self.gravity = 0
 
 	-- Set to true to loop the generator.
 	self.continuous = false
-	self.color = {1, 0, 0, 1}
+
+	-- Life of each particle, in seconds.
+	self.maxlife = 10
+
 	self.particles = {}
 	self.particleCount = 1000
+
+	-- The colorfunction determines what color each particle gets during
+	-- their lifetime. The default is
+	self.colorfunction = function(lifepercentage)
+		return {
+			1,
+			lifepercentage,
+			lifepercentage,
+			1
+		}
+	end
 
 	return self
 end
@@ -24,11 +45,11 @@ end
 -- re-create the particles table (with zero particles), then initializes all particles
 -- with the given properties.
 --]]
-function ParticleGenerator:init()
+function ParticleGenerator:init(origin)
+	self.origin = origin
 	self.particles = {}
 
 	for i = 1, self.particleCount do
-		local maxlife = love.math.random() * 2
 		local p = {}
 		self:resetParticle(p)
 
@@ -40,14 +61,15 @@ end
 -- Resets a particle's parameters.
 --]]
 function ParticleGenerator:resetParticle(p)
-	local maxlife = love.math.random() * 3
-	p.x         = self.pos.x
-	p.y         = self.pos.y
-	p.color     = self.color
+	local maxlife = love.math.random() * self.maxlife
+
+	p.x         = self.origin[1]
+	p.y         = self.origin[2]
+	p.color     = self.colorfunction(1)
 	p.radius    = 8
 	p.maxradius = 8
-	p.dx        = love.math.random(-80, 80)
-	p.dy        = love.math.random(-5, 100)
+	p.dx        = love.math.random(self.delta.x[1], self.delta.x[2])
+	p.dy        = love.math.random(self.delta.y[1], self.delta.y[2])
 	p.life      = maxlife -- life in seconds
 	p.maxlife   = maxlife -- life maximum
 end
@@ -63,18 +85,13 @@ function ParticleGenerator:update(dt)
 
 			p.x = p.x + p.dx * dt
 			p.y = p.y + p.dy * dt
-			p.dy = p.dy - 5
+			p.dy = p.dy - self.gravity
 
 			if p.x <= 0 or p.x >= love.graphics.getWidth() then
 				p.dx = -p.dx
 			end
 
-			p.color = {
-				1,
-				1 - lifepercentage,
-				0,
-				0.7
-			}
+			p.color = self.colorfunction(lifepercentage)
 
 			p.life = p.life - dt
 			-- Change the radius. The radius must decline to zero in proportion
@@ -82,7 +99,7 @@ function ParticleGenerator:update(dt)
 			-- particle is 4.8 seconds, after 4.8 seconds we must have reached
 			-- a radius of 0. We do that by just setting by calculating the
 			-- percentage of the lifetime, multiplied by the original max radius.
-			p.radius = p.maxradius * (p.life / p.maxlife)
+			p.radius = p.maxradius * (lifepercentage)
 		elseif p.life < 0 and self.continuous then
 			-- If we need to emit continuously, reset the particle.
 			self:resetParticle(p)
