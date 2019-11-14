@@ -1,5 +1,6 @@
 require "pgen"
 require "util"
+require "grid"
 
 paused = false
 
@@ -12,6 +13,8 @@ iterator = nil
 currentGenerator = nil
 
 mousePosition = { 0, 0 }
+
+grid = Grid:new()
 
 --- Initializes the generators with different values.
 function initializeGenerators()
@@ -104,6 +107,7 @@ end
 
 
 function love.draw()
+	grid:draw()
 	currentGenerator:draw()
 
 	love.graphics.setFont(globals.gameFont)
@@ -114,6 +118,19 @@ end
 function love.mousemoved(x, y, dx, dy, istouch)
 	mousePosition = { x, y }
 	currentGenerator.origin = { x, y }
+	grid.mousePosition = { x, y }
+end
+
+function love.wheelmoved(x, y)
+	if y > 0 then
+		grid.gridSize = grid.gridSize + 1
+	elseif y < 0 then
+		grid.gridSize = grid.gridSize - 1
+		-- amdgpu: The CS has been canceled because the context was lost
+		if grid.gridSize <= 0 then
+			grid.gridSize = 1
+		end
+	end
 end
 
 function love.keypressed(key)
