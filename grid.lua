@@ -5,6 +5,7 @@ function Grid:new()
 	local self = setmetatable({}, Grid)
 	self.gridSize = 10
 	self.mousePosition = { 0, 0 }
+	self.obstacles = {}
 	return self
 end
 
@@ -15,6 +16,18 @@ function Grid:getCrud()
 		self.gridSize,
 		self.gridSize,
 	}
+end
+
+function Grid:placeObstacle(x, y)
+	table.insert(self.obstacles, { x = x, y = y })
+end
+
+function Grid:drawObstacles()
+	for i, k in ipairs(self.obstacles) do
+		local posx = math.floor(k.x / self.gridSize) * self.gridSize
+		local posy = math.floor(k.y / self.gridSize) * self.gridSize
+		love.graphics.rectangle('fill', posx, posy, self.gridSize, self.gridSize)
+	end
 end
 
 function Grid:draw()
@@ -36,4 +49,6 @@ function Grid:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	local cursorPos = self:getCrud()
 	love.graphics.rectangle('fill', cursorPos[1], cursorPos[2], self.gridSize, self.gridSize)
+
+	self:drawObstacles()
 end

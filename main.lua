@@ -3,6 +3,7 @@ require "util"
 require "grid"
 
 paused = false
+generatorsEnabled = true
 
 globals = {
 	gamefont = nil
@@ -75,11 +76,23 @@ function initializeGenerators()
 		return { 1, 1, 1, 0.2}
 	end
 
+	fifth = ParticleGenerator:new()
+	fifth.name = "Da Last One"
+	fifth.continuous = true
+	fifth.maxlife = 3
+	fifth.delta.x = { -20, 490 }
+	fifth.delta.y = { -20, 10 }
+	fifth.gravity = -9.8
+	fifth.colorfunction = function(lifepercentage)
+		return { lifepercentage, 0.5, lifepercentage, lifepercentage }
+	end
+
 
 	table.insert(generators, one)
 	table.insert(generators, two)
 	table.insert(generators, third)
 	table.insert(generators, fourth)
+	table.insert(generators, fifth)
 
 	return generators
 end
@@ -102,17 +115,27 @@ function love.update(dt)
 		return
 	end
 
-	currentGenerator:update(dt)
+	if generatorsEnabled then
+		currentGenerator:update(dt)
+	end
 end
 
 
 function love.draw()
 	grid:draw()
-	currentGenerator:draw()
+
+	if generatorsEnabled then
+		currentGenerator:draw()
+	end
 
 	love.graphics.setFont(globals.gameFont)
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.print("Current generator " .. currentGenerator.name, 0, 0)
+end
+
+function love.mousepressed(x, y, button, istouch, presses)
+	print(string.format("Click on %d, %d", x, y))
+	grid:placeObstacle(x, y)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
@@ -143,6 +166,8 @@ function love.keypressed(key)
 	elseif key == 'f' then
 		local fs = love.window.getFullscreen()
 		love.window.setFullscreen(not fs)
+	elseif key == 's' then
+		generatorsEnabled = not generatorsEnabled
 	elseif key == ']' then
 		currentGenerator = iterator()
 		currentGenerator:init(mousePosition)
