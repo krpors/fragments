@@ -1,3 +1,5 @@
+require "util"
+
 StateParticlePlayer = {}
 StateParticlePlayer.__index = StateParticlePlayer
 
@@ -101,6 +103,9 @@ end
 
 
 function StateParticlePlayer:mousePressed(x, y, button, istouch, presses)
+end
+
+function StateParticlePlayer:mouseReleased(x, y, button, istouch, presses)
 end
 
 function StateParticlePlayer:mouseMoved(x, y, dx, dy, istouch)

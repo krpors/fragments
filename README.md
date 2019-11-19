@@ -14,4 +14,12 @@ Emitter:
 - Right click drop a particle factory
 
 Particle has properties such as:
--
+- Lifetime
+- Spread in directions?
+- Element type
+
+Element has properties:
+- Affected by gravity (i.e. gas, liquids, solids)?
+- Color
+- Interaction with other elements. E.g. fire -> water? Water -> fire? Plant -> fire.
+  Or for instance gas + gas = other element ?

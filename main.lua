@@ -1,7 +1,6 @@
 require "pgen"
 require "util"
 require "grid"
-require "emitter"
 require "state_particleplayer"
 require "state_fragments"
 
@@ -36,6 +35,12 @@ end
 function love.mousepressed(x, y, button, istouch, presses)
 	print(string.format("Click on %d, %d", x, y))
 	grid:placeObstacle(x, y)
+
+	gamestate:mousePressed(x, y, button, istouch, presses)
+end
+
+function love.mousereleased(x, y, button, istouch, presses)
+	gamestate:mouseReleased(x, y, button, istouch, presses)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
