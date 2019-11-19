@@ -1,6 +1,7 @@
 ParticleGenerator = {}
 ParticleGenerator.__index = ParticleGenerator
 
+-- This particle generator is a generator which can be used for H to play with.
 function ParticleGenerator:new()
 	local self = setmetatable({}, ParticleGenerator)
 
@@ -22,6 +23,9 @@ function ParticleGenerator:new()
 
 	-- Life of each particle, in seconds.
 	self.maxlife = 10
+
+	-- Maximum radius in pixels, per particle.
+	self.maxradius = 8
 
 	self.particles = {}
 	self.particleCount = 1000
@@ -57,17 +61,16 @@ function ParticleGenerator:init(origin)
 	end
 end
 
---[[
--- Resets a particle's parameters.
---]]
+-- Resets a particle's parameters, by using the properties of the
+-- parent generator.
 function ParticleGenerator:resetParticle(p)
 	local maxlife = love.math.random() * self.maxlife
 
 	p.x         = self.origin[1]
 	p.y         = self.origin[2]
 	p.color     = self.colorfunction(1)
-	p.radius    = 8
-	p.maxradius = 8
+	p.radius    = self.maxradius
+	p.maxradius = self.maxradius
 	p.dx        = love.math.random(self.delta.x[1], self.delta.x[2])
 	p.dy        = love.math.random(self.delta.y[1], self.delta.y[2])
 	p.life      = maxlife -- life in seconds
@@ -108,10 +111,13 @@ function ParticleGenerator:update(dt)
 end
 
 function ParticleGenerator:draw()
+	-- love.graphics.setPointSize(1)
+
 	for k, p in ipairs(self.particles) do
 		if p and p.life > 0 then
 			love.graphics.setColor(p.color)
 			love.graphics.circle('fill', p.x, p.y, p.radius)
+			-- love.graphics.points(p.x, p.y)
 		end
 	end
 end
