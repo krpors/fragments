@@ -35,6 +35,10 @@ function Emitter:new()
 	return self
 end
 
+function Emitter:setElement(e)
+	self.element = e
+end
+
 function Emitter:setEmitting(bool)
 	self.emitting = bool
 end
@@ -47,6 +51,8 @@ function Emitter:emitAt(x, y)
 end
 
 function Emitter:update(dt)
+	-- If we are emitting particles (i.e. clicked and stuff), start appending
+	-- new particles to the table.
 	if self.emitting then
 		-- add particles while we are emitting.
 		local particle = Particle:new()
@@ -55,7 +61,7 @@ function Emitter:update(dt)
 		table.insert(self.particles, particle)
 	end
 
-	-- update every particle
+	-- Update every particle.
 	for i, k in ipairs(self.particles) do
 		k.pos.x = k.pos.x + love.math.random() * dt * 150
 		k.pos.y = k.pos.y + love.math.random() * dt * 150

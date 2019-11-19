@@ -1,4 +1,5 @@
-require "emitter"
+require("emitter")
+require("element")
 
 StateFragments = {}
 StateFragments.__index = StateFragments
@@ -7,7 +8,14 @@ StateFragments.__index = StateFragments
 function StateFragments:new()
     local self = setmetatable({}, StateFragments)
 
+    local water = Element:new()
+    water.name = "Water"
+    water.mass = 1
+    water.type = "liquid"
+    water.life = 2
+
     self.emitter = Emitter:new()
+    self.emitter.setElement(water)
 
     return self
 end
