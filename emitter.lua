@@ -6,15 +6,29 @@ Particle.__index = Particle
 function Particle:new()
 	local self = setmetatable({}, Particle)
 
-	-- Life in seconds!
 	self.life = 2
-	self.size = 2
-	self.pos = {
-		x = 0,
-		y = 0,
-	}
+	self.size = 8
+	self.element = nil
+	self.x = 0
+	self.y = 0
+	self.prevx = 0
+	self.prevy = 0
 
 	return self
+end
+
+function Particle:__tostring()
+	return string.format("Particle (%d, %d)", self.x, self.y)
+end
+
+-- Returns true when this particle collides with another particle
+function Particle:collidesWith(otherParticle)
+	-- just do a simple bounding box collision detection
+	return
+		    self.x < otherParticle.x + otherParticle.size
+		and otherParticle.x < self.x + self.size
+		and self.y < otherParticle.y + otherParticle.size
+		and otherParticle.y < self.y + self.size
 end
 
 -- An emitter is just that: an emitter of particles. The emitter can be placed
@@ -56,28 +70,40 @@ function Emitter:update(dt)
 	if self.emitting then
 		-- add particles while we are emitting.
 		local particle = Particle:new()
-		particle.pos.x = self.origin.x
-		particle.pos.y = self.origin.y
+		particle.x = self.origin.x
+		particle.y = self.origin.y
+		particle.life = self.element.life
+		-- We need the particle element later on
+		particle.element = self.element
 		table.insert(self.particles, particle)
 	end
 
 	-- Update every particle.
-	for i, k in ipairs(self.particles) do
-		k.pos.x = k.pos.x + love.math.random() * dt * 150
-		k.pos.y = k.pos.y + love.math.random() * dt * 150
-		k.life = k.life - dt
+	for i, p in ipairs(self.particles) do
+		-- first make sure we have the previous positions saved
+		p.prevx = p.x
+		p.prevy = p.y
+
+		local dx = love.math.random(self.element.delta.x[1], self.element.delta.x[2])
+		local dy = love.math.random(self.element.delta.y[1], self.element.delta.y[2])
+
+		p.x = p.x + dx * dt
+		p.y = p.y + dy * dt
+		p.life = p.life - dt
 
 		-- If a particle dies, remove it from the particles list/table.
-		if k.life <= 0 then
+		if p.life <= 0 then
 			table.remove(self.particles, i)
+		end
+
+		if p.y + p.size >= love.graphics.getHeight() then
+			p.y = love.graphics.getHeight() - p.size
 		end
 	end
 end
 
 function Emitter:draw()
-	love.graphics.setPointSize(4)
-	for i, k in ipairs(self.particles) do
-		-- print(k)
-		love.graphics.points(k.pos.x, k.pos.y)
+	for _, p in ipairs(self.particles) do
+		love.graphics.rectangle('fill', p.x, p.y, p.size, p.size)
 	end
 end
