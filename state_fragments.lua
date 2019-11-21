@@ -4,64 +4,114 @@ require("element")
 StateFragments = {}
 StateFragments.__index = StateFragments
 
+local function createHydrogenEmitter()
+	local e = Element:new()
+	e.name = "Hydrogen"
+	e.gravity = 0
+	e.type = "gas"
+	e.color = {
+		cool = { 1, 1, 0, 1 },
+		hot = { 1, 1, 1, 1 }
+	}
+	e.delta = {
+		x = { -40, 40},
+		y = { -40, 40},
+	}
+	e.life = 5
+
+	local emitter = Emitter:new()
+	emitter:setElement(e)
+	return emitter
+end
+
+local function createWaterEmitter()
+	local e = Element:new()
+	e.name = "Water"
+	e.gravity = 9
+	e.delta = {
+		x = { -10, 10},
+		y = { 0, 80},
+	}
+	e.life = 10
+
+	local emitter = Emitter:new()
+	emitter:setElement(e)
+	return emitter
+end
+
+local function createFireEmitter()
+	local e = Element:new()
+	e.name = "Fire"
+	e.gravity = -9
+	e.color = {
+		cool = { 1, 0, 0, 1 },
+		hot = { 1, 1, 1, 1 }
+	}
+	e.delta = {
+		x = { -10, 10},
+		y = { -40, 10},
+	}
+	e.life = 10
+
+	local emitter = Emitter:new()
+	emitter:setElement(e)
+	return emitter
+end
+
 -- This is the actual Fragments implementation (fluidfun).
 function StateFragments:new()
 	local self = setmetatable({}, StateFragments)
 
-	local hydrogen = Element:new()
-	hydrogen.name = "Hydrogen"
-	hydrogen.mass = 1
-	hydrogen.type = "gas"
-	hydrogen.delta = {
-		x = { -50, 50},
-		y = { -2, 100},
-	}
-	hydrogen.life = 100
+	self.emitters = {}
+	table.insert(self.emitters, createHydrogenEmitter())
+	table.insert(self.emitters, createWaterEmitter())
+	table.insert(self.emitters, createFireEmitter())
 
-	self.emitter = Emitter:new()
-	self.emitter:setElement(hydrogen)
+	self.nextEmitter = circular_iter(self.emitters)
+	self.currentEmitter = self.nextEmitter()
 
 	return self
 end
 
 
 function StateFragments:mousePressed(x, y, button, istouch, presses)
-	self.emitter:setEmitting(true)
+	self.currentEmitter:setEmitting(true)
 end
 
 function StateFragments:mouseReleased(x, y, button, istouch, presses)
-	self.emitter:setEmitting(false)
+	self.currentEmitter:setEmitting(false)
 end
 
 function StateFragments:mouseMoved(x, y, dx, dy, istouch)
-	self.emitter:emitAt(x, y)
+	self.currentEmitter:emitAt(x, y)
 end
 
 function StateFragments:keyPressed(key)
 	if key == 'escape' then
 		love.event.quit()
+	elseif key == ']'  then
+		self.currentEmitter = self.nextEmitter()
 	end
 end
 
 function StateFragments:update(dt)
-	self.emitter:update(dt)
+	self.currentEmitter:update(dt)
 
-	for _, particle1 in ipairs(self.emitter.particles) do
-		for _, particle2 in ipairs(self.emitter.particles) do
-			if particle1 ~= particle2 then
-				if particle1:collidesWith(particle2) then
-					particle2.x = particle2.prevx
-					particle2.y = particle2.prevy
-				end
-			end
-		end
-	end
+	-- for _, particle1 in ipairs(self.currentEmitter.particles) do
+	-- 	for _, particle2 in ipairs(self.currentEmitter.particles) do
+	-- 		if particle1 ~= particle2 then
+	-- 			if particle1:collidesWith(particle2) then
+	-- 				particle2:moveInRandomDirection()
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function StateFragments:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.print("Fragments", 0, 0)
-	love.graphics.print("# of particles: " .. #self.emitter.particles, 0, 10)
+	love.graphics.print("# of particles: " .. #self.currentEmitter.particles, 0, 10)
 
-	self.emitter:draw()
+	self.currentEmitter:draw()
 end

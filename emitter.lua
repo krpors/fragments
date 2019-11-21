@@ -1,3 +1,5 @@
+require("util")
+
 -- Particle is a single particle with properties. The behaviour is depending
 -- on the particle's element.
 Particle = {}
@@ -7,18 +9,31 @@ function Particle:new()
 	local self = setmetatable({}, Particle)
 
 	self.life = 2
-	self.size = 8
+	self.size = 3
 	self.element = nil
 	self.x = 0
 	self.y = 0
 	self.prevx = 0
 	self.prevy = 0
+	self.dx = 0
+	self.dy = 0
+	self.color = { 1, 1, 0, 1 }
 
 	return self
 end
 
 function Particle:__tostring()
 	return string.format("Particle (%d, %d)", self.x, self.y)
+end
+
+function Particle:moveToPreviousPosition()
+	self.x = self.prevx
+	self.y = self.prevy
+end
+
+function Particle:moveInRandomDirection()
+	self.x = self.x + love.math.random(-1, 1) * self.size
+	self.y = self.y + love.math.random(-0.5, 1) * self.size
 end
 
 -- Returns true when this particle collides with another particle
@@ -64,18 +79,31 @@ function Emitter:emitAt(x, y)
 	}
 end
 
+-- Adds a new particle to the table.
+function Emitter:addNewParticle()
+	local particle = Particle:new()
+	particle.x = self.origin.x
+	particle.y = self.origin.y
+	particle.life = self.element.life
+	particle.color = {1, 0, 0, love.math.random()}
+
+	-- initialize the direction vectors first
+	particle.dx = love.math.random(self.element.delta.x[1], self.element.delta.x[2])
+	particle.dy = love.math.random(self.element.delta.y[1], self.element.delta.y[2])
+
+	-- We need the particle element later on
+	particle.element = self.element
+
+	table.insert(self.particles, particle)
+end
+
 function Emitter:update(dt)
 	-- If we are emitting particles (i.e. clicked and stuff), start appending
 	-- new particles to the table.
 	if self.emitting then
-		-- add particles while we are emitting.
-		local particle = Particle:new()
-		particle.x = self.origin.x
-		particle.y = self.origin.y
-		particle.life = self.element.life
-		-- We need the particle element later on
-		particle.element = self.element
-		table.insert(self.particles, particle)
+		self:addNewParticle()
+		self:addNewParticle()
+		self:addNewParticle()
 	end
 
 	-- Update every particle.
@@ -84,26 +112,58 @@ function Emitter:update(dt)
 		p.prevx = p.x
 		p.prevy = p.y
 
-		local dx = love.math.random(self.element.delta.x[1], self.element.delta.x[2])
-		local dy = love.math.random(self.element.delta.y[1], self.element.delta.y[2])
+		p.x = p.x + p.dx * dt
+		p.y = p.y + p.dy * dt
+		p.dy = p.dy + p.element.gravity
 
-		p.x = p.x + dx * dt
-		p.y = p.y + dy * dt
+		-- Diminish the life by the time delta.
 		p.life = p.life - dt
 
 		-- If a particle dies, remove it from the particles list/table.
 		if p.life <= 0 then
-			table.remove(self.particles, i)
+			-- table.remove(self.particles, i)
+			-- return
 		end
 
-		if p.y + p.size >= love.graphics.getHeight() then
-			p.y = love.graphics.getHeight() - p.size
+		-- Keep the particles inside the window.
+		self:checkParticleBounds(p)
+	end
+end
+
+-- Will check the particle bounds, and if the window edges are hit, invert
+-- the delta's, when applicable.
+function Emitter:checkParticleBounds(particle)
+	-- Whether there is gravity or not, invert the dx of the particle.
+	if particle.x <= 0 or particle.x >= love.graphics.getWidth() then
+		particle.dx = -math.abs(particle.dx)
+	end
+
+	if particle.y <= 0 then
+		if particle.element.gravity < 0 then
+			particle.y = 0
+		else
+			particle.dy = math.abs(particle.dy)
+		end
+	end
+
+	-- Check if the particle goes beyond the screen's height.
+	if particle.y >= love.graphics.getHeight() then
+		-- First 'clamp' the value to the maximum height.
+		particle.y = love.graphics.getHeight() - particle.size
+
+		-- If there is zero gravity, it should act like a gas. In that case
+		-- invert the y axis at all times.
+		if particle.element.gravity == 0 then
+			particle.dy = -math.abs(particle.dy)
+		else
+			-- particle.y = love.graphics.getHeight() - particle.size
 		end
 	end
 end
 
 function Emitter:draw()
 	for _, p in ipairs(self.particles) do
-		love.graphics.rectangle('fill', p.x, p.y, p.size, p.size)
+		love.graphics.setColor(self.element.color.cool)
+		love.graphics.circle('fill', p.x, p.y, p.size)
 	end
 end

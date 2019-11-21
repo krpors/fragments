@@ -9,14 +9,16 @@ Element.__index = Element
 function Element:new()
 	local self = setmetatable({}, Element)
 
+	-- Name of the element. Just a description.
 	self.name = "None"
-	self.mass = 10
-	self.type = "solid"
+	-- Gravity modifier for the element.
+	self.mass = 9.8
+	-- Lifetime for an element particle.
 	self.life = 2
-	self.gravity = 9.8
+	-- Color parameter.
 	self.color = {
-		hot  = { 1, 0, 0, 1 },
 		cool = { 0, 0, 1, 1 },
+		hot  = { 1, 0, 0, 1 },
 	}
 
 	return self
