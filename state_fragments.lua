@@ -17,7 +17,7 @@ local function createHydrogenEmitter()
 		x = { -40, 40},
 		y = { -40, 40},
 	}
-	e.life = 5
+	e.life = 10
 
 	local emitter = Emitter:new()
 	emitter:setElement(e)
@@ -97,15 +97,15 @@ end
 function StateFragments:update(dt)
 	self.currentEmitter:update(dt)
 
-	-- for _, particle1 in ipairs(self.currentEmitter.particles) do
-	-- 	for _, particle2 in ipairs(self.currentEmitter.particles) do
-	-- 		if particle1 ~= particle2 then
-	-- 			if particle1:collidesWith(particle2) then
-	-- 				particle2:moveInRandomDirection()
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
+	for _, particle1 in ipairs(self.currentEmitter.particles) do
+		for _, particle2 in ipairs(self.currentEmitter.particles) do
+			if particle1 ~= particle2 then
+				if particle1:collidesWith(particle2) then
+					particle2:moveInRandomDirection()
+				end
+			end
+		end
+	end
 end
 
 function StateFragments:draw()

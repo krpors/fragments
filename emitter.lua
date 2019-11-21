@@ -119,15 +119,12 @@ function Emitter:update(dt)
 		-- Diminish the life by the time delta.
 		p.life = p.life - dt
 
-		-- If a particle dies, remove it from the particles list/table.
-		if p.life <= 0 then
-			-- table.remove(self.particles, i)
-			-- return
-		end
-
 		-- Keep the particles inside the window.
 		self:checkParticleBounds(p)
 	end
+
+	-- Remove dead particles:
+	table.removeif(self.particles, function(p) return p.life <= 0 end)
 end
 
 -- Will check the particle bounds, and if the window edges are hit, invert
@@ -156,7 +153,7 @@ function Emitter:checkParticleBounds(particle)
 		if particle.element.gravity == 0 then
 			particle.dy = -math.abs(particle.dy)
 		else
-			-- particle.y = love.graphics.getHeight() - particle.size
+			particle.y = love.graphics.getHeight() - particle.size
 		end
 	end
 end
