@@ -36,15 +36,22 @@ end
 
 -- The builtin table.remove is unperformant and we therefore use our own tiny
 -- algorithm to remove items from the table that adhere to conditions.
--- TODO: more docs
+-- To use this:
+--
+-- 	list = {}
+-- 	for i = 1, 90000 do
+-- 		table.insert(list, i)
+-- 	end
+--
+-- 	table.removeif(list, function(val) return val % 2 == 0 end)
 function table.removeif(list, removefunc)
 	local removeindex = 0
 
 	for i = 1, #list do
 		-- Check using the function whether it returns true for the given table
 		-- value. If so, that means we have to keep the value. If not, we have
-		-- to remove it.
-		if removefunc(list[i]) then
+		-- to remove it. Also, already nil values should be marked for 'removal'.
+		if removefunc(list[i]) or list[i] == nil then
 			-- The current list item should not be kept. Remove it by marking
 			-- the index with nil, and assign the new removal index.
 			list[i] = nil
