@@ -37,14 +37,20 @@ end
 -- The builtin table.remove is unperformant and we therefore use our own tiny
 -- algorithm to remove items from the table that adhere to conditions.
 -- TODO: more docs
-function table.removeif(table, func)
+function table.removeif(table, removefunc)
 	local removeindex = 0
 
 	for i = 1, #list do
 		-- Check using the function whether it returns true for the given table
 		-- value. If so, that means we have to keep the value. If not, we have
 		-- to remove it.
-		if func(list[i]) then
+		if removefunc(list[i]) then
+			-- The current list item should not be kept. Remove it by marking
+			-- the index with nil, and assign the new removal index.
+			-- print(string.format("%2d Remove  %s", i, list[i]))
+			list[i] = nil
+			removeindex = removeindex + 1
+		else
 			-- print(string.format("%2d Keep    %s (rindex: %d)", i, list[i], removeindex))
 
 			-- We check here whether it's necessary to swap elements
@@ -56,12 +62,6 @@ function table.removeif(table, func)
 				-- We have swapped, so set the 'old' keep-element to nil.
 				list[i] = nil
 			end
-		else
-			-- The current list item should not be kept. Remove it by marking
-			-- the index with nil, and assign the new removal index.
-			-- print(string.format("%2d Remove  %s", i, list[i]))
-			list[i] = nil
-			removeindex = removeindex + 1
 		end
 	end
 end
