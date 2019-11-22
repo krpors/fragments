@@ -10,7 +10,7 @@ globals = {
 
 mousePosition = { 0, 0 }
 
-gamestate = StateParticlePlayer:new()
+gamestate = StateFragments:new()
 
 grid = Grid:new()
 

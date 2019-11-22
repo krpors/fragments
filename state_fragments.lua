@@ -111,12 +111,19 @@ function StateFragments:update(dt)
 end
 
 function StateFragments:draw()
+	love.graphics.setFont(globals.gameFont)
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.print("Fragments", 0, 0)
 	love.graphics.print("# of particles: " .. #self.currentEmitter.particles, 0, 10)
 	local s = ""
+	local max = 1
 	for _, p in ipairs(self.currentEmitter.particles) do
 		s = s .. string.format("%s\n", p)
+		max = max + 1
+		if max >= 10 then
+			s = s .. "(...)"
+			break
+		end
 	end
 
 	love.graphics.print(s, 0, 20)
