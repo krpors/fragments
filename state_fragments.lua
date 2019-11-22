@@ -101,7 +101,9 @@ function StateFragments:update(dt)
 		for _, particle2 in ipairs(self.currentEmitter.particles) do
 			if particle1 ~= particle2 then
 				if particle1:collidesWith(particle2) then
-					particle2:moveInRandomDirection()
+					-- particle2:moveInRandomDirection()
+					particle1:handleCollision(particle2)
+					particle2:handleCollision(particle1)
 				end
 			end
 		end
