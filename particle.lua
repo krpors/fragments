@@ -23,7 +23,7 @@ function Particle:new(element)
 end
 
 function Particle:__tostring()
-	return string.format("Particle (%d, %d)", self.x, self.y)
+	return string.format("Particle (%d, %d), life: %f", self.x, self.y, self.life)
 end
 
 function Particle:moveToPreviousPosition()
