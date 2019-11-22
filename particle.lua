@@ -72,7 +72,13 @@ end
 -- the delta's, when applicable.
 function Particle:checkParticleBounds()
 	-- Whether there is gravity or not, invert the dx of the particle.
-	if self.x <= 0 or self.x >= love.graphics.getWidth() then
+	if self.x < 0 then
+		self.x = 0
+		self.dx = math.abs(self.dx)
+	end
+
+	if self.x >= love.graphics.getWidth() then
+		self.x = love.graphics.getWidth() - self.size
 		self.dx = -math.abs(self.dx)
 	end
 
