@@ -1,5 +1,4 @@
 require("emitter")
-require("element")
 require("hydrogen")
 
 StateFragments = {}

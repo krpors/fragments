@@ -63,7 +63,6 @@ function Hydrogen:update(dt)
 
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
-	self.dy = self.dy + self.gravity
 
 	-- Diminish the life by the time delta.
     self.life = self.life - dt
