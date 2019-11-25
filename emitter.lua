@@ -1,26 +1,30 @@
 require("util")
-require("particle")
 
--- An emitter is just that: an emitter of particles. The emitter can be placed
--- on the grid to emit particles of a certain element type. The emitter contains
--- all the emitted particles as a list.
+-- An emitter is actually just a container for generated particles. It is
+-- responsible for creating them (via a generator function), updating them and
+-- drawing them. Every update(), dead particles are removed from the backing
+-- list.
+--
+-- The emitter itself is rather 'dumb': the logic of the actual particle
+-- behaviour is done by the particles themselves
 Emitter = {}
 Emitter.__index = Emitter
 
-function Emitter:new()
+-- Creates a new emitter. The supplied `generator' is a function which returns
+-- a new particle, for example:
+--
+-- 	Emitter:new(function() return HydrogenParticle:new() end)
+function Emitter:new(generator)
 	local self = setmetatable({}, Emitter)
 	self.particles = {}
 	self.emitting = false
+	self.generator = generator
 	-- The origin of the emitter:
 	self.origin = {
 		x = 0,
 		y = 0,
 	}
 	return self
-end
-
-function Emitter:setElement(e)
-	self.element = e
 end
 
 function Emitter:setEmitting(bool)
@@ -36,8 +40,8 @@ end
 
 -- Adds a new particle to the table.
 function Emitter:addNewParticle()
-	-- Create a new particle, derived from properties of the element.
-	local particle = Particle:new(self.element)
+	-- Create a new particle from the generator function.
+	local particle = self:generator()
 	particle.x = self.origin.x
 	particle.y = self.origin.y
 	table.insert(self.particles, particle)

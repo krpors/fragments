@@ -1,49 +1,52 @@
--- Particle is a single particle with properties. The behaviour is depending
--- on the particle's element. A particle knows how to update itself.
-Particle = {}
-Particle.__index = Particle
+Hydrogen = {}
+Hydrogen.__index = Hydrogen
 
-function Particle:new(element)
-	local self = setmetatable({}, Particle)
+function Hydrogen:new()
+	local self = setmetatable({}, Hydrogen)
 
-	-- TODO: initialize from element
-	self.element = element
-	self.life = element.life
+	self.name = "Hydrogen"
 
-	self.size = 3
+	self.maxlife = 20
+	self.life = self.maxlife
+
+	self.size = 8
+
 	self.x = 0
 	self.y = 0
+
 	self.prevx = 0
 	self.prevy = 0
-	self.dx = love.math.random(self.element.delta.x[1], self.element.delta.x[2])
-	self.dy = love.math.random(self.element.delta.y[1], self.element.delta.y[2])
-	self.color = { 1, 1, 0, 1 }
+
+	self.dx = love.math.random(-10, 10)
+	self.dy = love.math.random(-10, 10)
+
+	self.color = { 0, 0.5, 1, 1 }
 
 	return self
 end
 
-function Particle:__tostring()
-	return string.format("Particle (%d, %d), life: %f", self.x, self.y, self.life)
+function Hydrogen:__tostring()
+	return string.format("Hydrogen (%d, %d), life: %f", self.x, self.y, self.life)
 end
 
-function Particle:moveToPreviousPosition()
+function Hydrogen:moveToPreviousPosition()
 	self.x = self.prevx
 	self.y = self.prevy
 end
 
-function Particle:moveInRandomDirection()
+function Hydrogen:moveInRandomDirection()
 	self.x = self.x + love.math.random(-0.5, 0.5) * self.size
 	self.y = self.y + love.math.random(-0.5, 0.) * self.size
 end
 
-function Particle:handleCollision(otherParticle)
-	if self.element == otherParticle.element then
+function Hydrogen:handleCollision(otherParticle)
+	if self.name == otherParticle.name then
 		self:moveInRandomDirection()
 	end
 end
 
 -- Returns true when this particle collides with another particle
-function Particle:collidesWith(otherParticle)
+function Hydrogen:collidesWith(otherParticle)
 	-- just do a simple bounding box collision detection
 	return
 		    self.x < otherParticle.x + otherParticle.size
@@ -53,14 +56,14 @@ function Particle:collidesWith(otherParticle)
 end
 
 -- A particle knows how to update itself every iteration.
-function Particle:update(dt)
+function Hydrogen:update(dt)
 	-- first make sure we have the previous positions saved
 	self.prevx = self.x
 	self.prevy = self.y
 
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
-	self.dy = self.dy + self.element.gravity
+	self.dy = self.dy + self.gravity
 
 	-- Diminish the life by the time delta.
     self.life = self.life - dt
@@ -70,7 +73,7 @@ end
 
 -- Will check the particle bounds, and if the window edges are hit, invert
 -- the delta's, when applicable.
-function Particle:checkParticleBounds()
+function Hydrogen:checkParticleBounds()
 	-- Whether there is gravity or not, invert the dx of the particle.
 	if self.x < 0 then
 		self.x = 0
@@ -83,11 +86,8 @@ function Particle:checkParticleBounds()
 	end
 
 	if self.y <= 0 then
-		if self.element.gravity < 0 then
-			self.y = 0
-		else
-			self.dy = math.abs(self.dy)
-		end
+		self.y = self.size
+		self.dy = math.abs(self.dy)
 	end
 
 	-- Check if the self goes beyond the screen's height.
@@ -97,15 +97,17 @@ function Particle:checkParticleBounds()
 
 		-- If there is zero gravity, it should act like a gas. In that case
 		-- invert the y axis at all times.
-		if self.element.gravity == 0 then
-			self.dy = -math.abs(self.dy)
-		else
-			self.y = love.graphics.getHeight() - self.size
-		end
+		self.dy = -math.abs(self.dy)
+		self.y = love.graphics.getHeight() - self.size
 	end
 end
 
-function Particle:draw()
-    love.graphics.setColor(self.element.color.cool)
-    love.graphics.circle('fill', self.x, self.y, self.size)
+function Hydrogen:draw()
+	local percentageLife = self.life / self.maxlife
+	self.color[4] = percentageLife
+
+	love.graphics.setColor(self.color)
+	love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
 end
+
+-- =============================================================================

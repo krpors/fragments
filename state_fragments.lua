@@ -1,71 +1,16 @@
 require("emitter")
 require("element")
+require("hydrogen")
 
 StateFragments = {}
 StateFragments.__index = StateFragments
-
-local function createHydrogenEmitter()
-	local e = Element:new()
-	e.name = "Hydrogen"
-	e.gravity = 0
-	e.type = "gas"
-	e.color = {
-		cool = { 1, 1, 0, 1 },
-		hot = { 1, 1, 1, 1 }
-	}
-	e.delta = {
-		x = { -40, 40},
-		y = { -40, 40},
-	}
-	e.life = 10
-
-	local emitter = Emitter:new()
-	emitter:setElement(e)
-	return emitter
-end
-
-local function createWaterEmitter()
-	local e = Element:new()
-	e.name = "Water"
-	e.gravity = 9
-	e.delta = {
-		x = { -10, 10},
-		y = { 0, 80},
-	}
-	e.life = 10
-
-	local emitter = Emitter:new()
-	emitter:setElement(e)
-	return emitter
-end
-
-local function createFireEmitter()
-	local e = Element:new()
-	e.name = "Fire"
-	e.gravity = -9
-	e.color = {
-		cool = { 1, 0, 0, 1 },
-		hot = { 1, 1, 1, 1 }
-	}
-	e.delta = {
-		x = { -10, 10},
-		y = { -40, 10},
-	}
-	e.life = 10
-
-	local emitter = Emitter:new()
-	emitter:setElement(e)
-	return emitter
-end
 
 -- This is the actual Fragments implementation (fluidfun).
 function StateFragments:new()
 	local self = setmetatable({}, StateFragments)
 
 	self.emitters = {}
-	table.insert(self.emitters, createHydrogenEmitter())
-	table.insert(self.emitters, createWaterEmitter())
-	table.insert(self.emitters, createFireEmitter())
+	table.insert(self.emitters, Emitter:new(function() return Hydrogen:new() end ))
 
 	self.nextEmitter = circular_iter(self.emitters)
 	self.currentEmitter = self.nextEmitter()
