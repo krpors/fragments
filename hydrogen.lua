@@ -1,9 +1,7 @@
-Hydrogen = {}
-Hydrogen.__index = Hydrogen
+require("class")
+Hydrogen = class()
 
-function Hydrogen:new()
-	local self = setmetatable({}, Hydrogen)
-
+function Hydrogen:_init()
 	self.name = "Hydrogen"
 
 	self.maxlife = 20
@@ -21,8 +19,6 @@ function Hydrogen:new()
 	self.dy = love.math.random(-10, 10)
 
 	self.color = { 0, 0.5, 1, 1 }
-
-	return self
 end
 
 function Hydrogen:__tostring()

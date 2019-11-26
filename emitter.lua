@@ -1,3 +1,4 @@
+require("class")
 require("util")
 
 -- An emitter is actually just a container for generated particles. It is
@@ -7,15 +8,13 @@ require("util")
 --
 -- The emitter itself is rather 'dumb': the logic of the actual particle
 -- behaviour is done by the particles themselves
-Emitter = {}
-Emitter.__index = Emitter
+Emitter = class()
 
 -- Creates a new emitter. The supplied `generator' is a function which returns
 -- a new particle, for example:
 --
--- 	Emitter:new(function() return HydrogenParticle:new() end)
-function Emitter:new(generator)
-	local self = setmetatable({}, Emitter)
+-- 	Emitter(function() return HydrogenParticle:new() end)
+function Emitter:_init(generator)
 	self.particles = {}
 	self.emitting = false
 	self.generator = generator
@@ -24,7 +23,6 @@ function Emitter:new(generator)
 		x = 0,
 		y = 0,
 	}
-	return self
 end
 
 function Emitter:setEmitting(bool)

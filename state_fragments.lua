@@ -1,20 +1,16 @@
+require("class")
 require("emitter")
 require("hydrogen")
 
-StateFragments = {}
-StateFragments.__index = StateFragments
+StateFragments = class()
 
 -- This is the actual Fragments implementation (fluidfun).
-function StateFragments:new()
-	local self = setmetatable({}, StateFragments)
-
+function StateFragments:_init()
 	self.emitters = {}
-	table.insert(self.emitters, Emitter:new(function() return Hydrogen:new() end ))
+	table.insert(self.emitters, Emitter(function() return Hydrogen() end ))
 
 	self.nextEmitter = circular_iter(self.emitters)
 	self.currentEmitter = self.nextEmitter()
-
-	return self
 end
 
 

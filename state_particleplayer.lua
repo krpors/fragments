@@ -1,13 +1,11 @@
-require "util"
+require("class")
+require("util")
 
-StateParticlePlayer = {}
-StateParticlePlayer.__index = StateParticlePlayer
+StateParticlePlayer = class()
 
 -- This state can be used to play around with the particle generator itself.
 -- It should be different than the 'fluidfun' part.
-function StateParticlePlayer:new()
-    local self = setmetatable({}, StateParticlePlayer)
-
+function StateParticlePlayer:_init()
 	self.paused = false
 	self.generatorsEnabled = true
 
@@ -16,22 +14,20 @@ function StateParticlePlayer:new()
 
 	self.currentGenerator = self.iterator()
 	self.currentGenerator:init({0, 0})
-
-    return self
 end
 
 --- Initializes the generators with different values.
 function StateParticlePlayer:createGenerators()
 	local generators = {}
 
-	local one = ParticleGenerator:new()
+	local one = ParticleGenerator()
 	one.name = "Fire"
 	one.continuous = true
 	one.delta.x = { -20, 20 }
 	one.delta.y = { -20, 20 }
 	one.gravity = 0
 
-	two = ParticleGenerator:new()
+	two = ParticleGenerator()
 	two.name = "Firey Frank"
 	two.continuous = true
 	two.delta.x = { -100, 100 }
@@ -48,7 +44,7 @@ function StateParticlePlayer:createGenerators()
 		}
 	end
 
-	third = ParticleGenerator:new()
+	third = ParticleGenerator()
 	third.name = "Third one"
 	third.continuous = true
 	third.maxlife = 1
@@ -59,7 +55,7 @@ function StateParticlePlayer:createGenerators()
 		return { 1, 1, 0, 1 - lifepercentage }
 	end
 
-	fourth = ParticleGenerator:new()
+	fourth = ParticleGenerator()
 	fourth.name = "Confetti!"
 	fourth.continuous = true
 	fourth.maxlife = 2
@@ -79,7 +75,7 @@ function StateParticlePlayer:createGenerators()
 		return { 1, 1, 1, 0.2}
 	end
 
-	fifth = ParticleGenerator:new()
+	fifth = ParticleGenerator()
 	fifth.name = "Da Last One"
 	fifth.continuous = false
 	fifth.maxlife = 3

@@ -10,7 +10,7 @@ globals = {
 
 mousePosition = { 0, 0 }
 
-gamestate = StateFragments:new()
+gamestate = StateFragments()
 
 grid = Grid:new()
 
@@ -66,9 +66,9 @@ function love.keypressed(key)
 	if key == 'escape' then
 		love.event.quit()
 	elseif key == 'f1' then
-		gamestate = StateParticlePlayer:new()
+		gamestate = StateParticlePlayer()
 	elseif key == 'f2' then
-		gamestate = StateFragments:new()
+		gamestate = StateFragments()
 	end
 
 	gamestate:keyPressed(key)

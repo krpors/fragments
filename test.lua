@@ -1,17 +1,53 @@
+require("class")
 -- The file can be used for testing
 
-require("util")
+BaseClass = {}
+BaseClass.__index = BaseClass
 
-list = {}
-
-for i = 1, 90000 do
-	table.insert(list, i)
+function BaseClass.new()
+	local self = setmetatable({}, BaseClass)
+	return self
 end
 
-print("================")
-table.removeif(list, function(val) return val % 2 == 0 end)
-print("================")
-
-for i = 1, #list do
-	print(i, list[i])
+function BaseClass:hello()
+	print ("From base class")
 end
+
+local DerivedClass = {}
+DerivedClass.__index = DerivedClass
+
+function DerivedClass.new()
+	setmetatable(DerivedClass, {
+		__index = BaseClass,
+	})
+	local self = setmetatable({}, DerivedClass)
+	return self
+end
+
+-- function DerivedClass:hello()
+-- 	print ("From derived")
+-- end
+
+local d = DerivedClass.new()
+print(d)
+d:hello()
+
+local z = DerivedClass.new()
+print(z)
+z:hello()
+
+
+print("====")
+
+local Bla = class()
+function Bla:hello()
+	print("From Blas")
+end
+
+local Derp = class(Bla)
+function Derp:hello()
+	print("From derp")
+end
+
+local d = Derp()
+d:hello()

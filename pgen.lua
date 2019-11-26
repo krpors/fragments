@@ -1,10 +1,9 @@
-ParticleGenerator = {}
-ParticleGenerator.__index = ParticleGenerator
+require("class")
 
 -- This particle generator is a generator which can be used for H to play with.
-function ParticleGenerator:new()
-	local self = setmetatable({}, ParticleGenerator)
+ParticleGenerator = class()
 
+function ParticleGenerator:_init()
 	-- Spawn point, or just the origin of the generator
 	self.origin = { 0, 0 }
 
@@ -40,8 +39,6 @@ function ParticleGenerator:new()
 			1
 		}
 	end
-
-	return self
 end
 
 --[[
