@@ -45,9 +45,9 @@ function Bla:hello()
 end
 
 local Derp = class(Bla)
-function Derp:hello()
-	print("From derp")
-end
+-- function Derp:hello()
+-- 	print("From derp")
+-- end
 
 local d = Derp()
 d:hello()

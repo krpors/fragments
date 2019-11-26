@@ -18,6 +18,7 @@ function Emitter:_init(generator)
 	self.particles = {}
 	self.emitting = false
 	self.generator = generator
+	self.multiplier = 1
 	-- The origin of the emitter:
 	self.origin = {
 		x = 0,

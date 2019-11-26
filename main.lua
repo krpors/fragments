@@ -19,8 +19,16 @@ function love.load()
 	globals.gameFont = love.graphics.newImageFont("font.png", glyphs, 2)
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	love.mouse.setVisible(false)
+
+	effect = love.graphics.newShader([[
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+			vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+			return vec4(0,0,1,0.5);
+		  }
+    ]])
 end
 
+local t = 0
 function love.update(dt)
 	gamestate:update(dt)
 end
@@ -29,7 +37,12 @@ end
 function love.draw()
 	grid:draw()
 
+	love.graphics.setShader()
 	gamestate:draw()
+
+	-- LOOK AT THE PRETTY COLORS!
+	-- love.graphics.setShader(effect)
+	-- love.graphics.rectangle('fill', 10,305,780,285))
 end
 
 function love.mousepressed(x, y, button, istouch, presses)

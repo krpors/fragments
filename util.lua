@@ -68,3 +68,9 @@ function table.removeif(list, removefunc)
 		end
 	end
 end
+
+function table.copyinto(existingtable, othertable)
+	for i, v in ipairs(othertable) do
+		table.insert(existingtable, v)
+	end
+end

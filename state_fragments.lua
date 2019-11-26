@@ -1,6 +1,7 @@
 require("class")
 require("emitter")
 require("hydrogen")
+require("oxygen")
 
 StateFragments = class()
 
@@ -8,22 +9,29 @@ StateFragments = class()
 function StateFragments:_init()
 	self.emitters = {}
 	table.insert(self.emitters, Emitter(function() return Hydrogen() end ))
+	table.insert(self.emitters, Emitter(function() return Oxygen() end ))
+
+	self.placedEmitters = {}
 
 	self.nextEmitter = circular_iter(self.emitters)
 	self.currentEmitter = self.nextEmitter()
+
+	self.allParticles = {}
 end
 
 
 function StateFragments:mousePressed(x, y, button, istouch, presses)
-	self.currentEmitter:setEmitting(true)
+	-- self.currentEmitter:setEmitting(true)
+	local e = Emitter(function() return Hydrogen() end )
+	e:emitAt(x, y)
+	e:setEmitting(true)
+	table.insert(self.placedEmitters, e)
 end
 
 function StateFragments:mouseReleased(x, y, button, istouch, presses)
-	self.currentEmitter:setEmitting(false)
 end
 
 function StateFragments:mouseMoved(x, y, dx, dy, istouch)
-	self.currentEmitter:emitAt(x, y)
 end
 
 function StateFragments:keyPressed(key)
@@ -31,30 +39,51 @@ function StateFragments:keyPressed(key)
 		love.event.quit()
 	elseif key == ']'  then
 		self.currentEmitter = self.nextEmitter()
+	elseif key == 'k' then
+		print(collectgarbage("count"))
+		for i, v in ipairs(self.placedEmitters) do
+			print("Nilling")
+			v = nil
+		end
+		self.allParticles = {}
+		print(collectgarbage("count"))
 	end
 end
 
 function StateFragments:update(dt)
-	self.currentEmitter:update(dt)
+	self.allParticles = {}
 
-	for _, particle1 in ipairs(self.currentEmitter.particles) do
-		for _, particle2 in ipairs(self.currentEmitter.particles) do
-			if particle1 ~= particle2 then
-				if particle1:collidesWith(particle2) then
-					-- particle2:moveInRandomDirection()
-					particle1:handleCollision(particle2)
-					particle2:handleCollision(particle1)
-				end
-			end
-		end
+	for i, emitter in ipairs(self.placedEmitters) do
+		emitter:update(dt)
+
+		-- Insert all particle refs into a big giant array so we can easily
+		-- do collision detection...
+		table.copyinto(self.allParticles, emitter.particles)
 	end
+
+	-- for _, p1 in ipairs(self.allParticles) do
+	-- 	for _, p2 in ipairs(self.allParticles) do
+	-- 		if p1 ~= p2 then
+	-- 			if p1:collidesWith(p2) then
+	-- 				p1:handleCollision(p2)
+	-- 				p2:handleCollision(p1)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function StateFragments:draw()
+	for i, emitter in ipairs(self.placedEmitters) do
+		emitter:draw()
+	end
+
 	love.graphics.setFont(globals.gameFont)
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.print("Fragments", 0, 0)
-	love.graphics.print("# of particles: " .. #self.currentEmitter.particles, 0, 10)
+	love.graphics.print("FPS: " .. love.timer.getFPS())
+	love.graphics.print("KB used: " .. collectgarbage("count"), 0, 10)
+	love.graphics.print("Fragments", 0, 20)
+	love.graphics.print("# of particles: " .. #self.allParticles, 0, 30)
 	local s = ""
 	local max = 1
 	for _, p in ipairs(self.currentEmitter.particles) do
@@ -67,5 +96,4 @@ function StateFragments:draw()
 	end
 
 	love.graphics.print(s, 0, 20)
-	self.currentEmitter:draw()
 end
