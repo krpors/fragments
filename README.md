@@ -8,18 +8,12 @@ Things to do:
 1. Particle collision
 1. Particle response on collision
 
+# Broad phase collision detection
 
-Emitter:
-- Emits particles on mousedowns.
-- Right click drop a particle factory
+Use a spatial grid. This need to be configurable (i.e. grow, shrink) to check
+the optimal configuration and to play with.
 
-Particle has properties such as:
-- Lifetime
-- Spread in directions?
-- Element type
+An emitter creates particle instances and will add them to the array of
+particles. Therefore each emitter maintains the particles.
 
-Element has properties:
-- Affected by gravity (i.e. gas, liquids, solids)?
-- Color
-- Interaction with other elements. E.g. fire -> water? Water -> fire? Plant -> fire.
-  Or for instance gas + gas = other element ?
+After each particle updates its position, determine the Grid position

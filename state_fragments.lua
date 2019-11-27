@@ -1,4 +1,5 @@
 require("class")
+require("spatialgrid")
 require("emitter")
 require("hydrogen")
 require("oxygen")
@@ -17,6 +18,8 @@ function StateFragments:_init()
 	self.currentEmitter = self.nextEmitter()
 
 	self.allParticles = {}
+
+	self.spatialGrid = SpatialGrid()
 end
 
 
@@ -45,21 +48,26 @@ function StateFragments:keyPressed(key)
 			print("Nilling")
 			v = nil
 		end
-		self.allParticles = {}
 		print(collectgarbage("count"))
 	end
 end
 
 function StateFragments:update(dt)
 	self.allParticles = {}
+	self.spatialGrid:reinitialize()
 
 	for i, emitter in ipairs(self.placedEmitters) do
 		emitter:update(dt)
 
 		-- Insert all particle refs into a big giant array so we can easily
 		-- do collision detection...
-		table.copyinto(self.allParticles, emitter.particles)
+		for i, v in ipairs(emitter.particles) do
+			self.spatialGrid:addParticle(v)
+		end
+		-- table.copyinto(self.allParticles, emitter.particles)
 	end
+
+	self.spatialGrid:print()
 
 	-- for _, p1 in ipairs(self.allParticles) do
 	-- 	for _, p2 in ipairs(self.allParticles) do

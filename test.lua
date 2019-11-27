@@ -1,53 +1,30 @@
 require("class")
--- The file can be used for testing
+require("spatialgrid")
 
-BaseClass = {}
-BaseClass.__index = BaseClass
-
-function BaseClass.new()
-	local self = setmetatable({}, BaseClass)
-	return self
+Particle = class()
+function Particle:_init()
+    self.x = 20
+    self.y = 237
+    self.size = 5
 end
 
-function BaseClass:hello()
-	print ("From base class")
+function Particle:__tostring()
+    return string.format("Particle at %d, %d", self.x, self.y)
 end
 
-local DerivedClass = {}
-DerivedClass.__index = DerivedClass
+p1 = Particle()
+p1.x = 2
+p1.y = 2
 
-function DerivedClass.new()
-	setmetatable(DerivedClass, {
-		__index = BaseClass,
-	})
-	local self = setmetatable({}, DerivedClass)
-	return self
-end
-
--- function DerivedClass:hello()
--- 	print ("From derived")
--- end
-
-local d = DerivedClass.new()
-print(d)
-d:hello()
-
-local z = DerivedClass.new()
-print(z)
-z:hello()
+p2 = Particle()
+p2.x = 2
+p2.y = 2
 
 
-print("====")
 
-local Bla = class()
-function Bla:hello()
-	print("From Blas")
-end
+g = SpatialGrid()
 
-local Derp = class(Bla)
--- function Derp:hello()
--- 	print("From derp")
--- end
+g:addParticle(p1)
+g:addParticle(p2)
 
-local d = Derp()
-d:hello()
+g:print()

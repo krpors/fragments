@@ -1,8 +1,8 @@
-require "pgen"
-require "util"
-require "grid"
-require "state_particleplayer"
-require "state_fragments"
+require("pgen")
+require("util")
+require("spatialgrid")
+require("state_particleplayer")
+require("state_fragments")
 
 globals = {
 	gamefont = nil
@@ -12,7 +12,7 @@ mousePosition = { 0, 0 }
 
 gamestate = StateFragments()
 
-grid = Grid:new()
+grid = SpatialGrid()
 
 function love.load()
 	local glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-=_+|/\\:;'\"<>,.?"
