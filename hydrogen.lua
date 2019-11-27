@@ -15,8 +15,8 @@ function Hydrogen:_init()
 	self.prevx = 0
 	self.prevy = 0
 
-	self.dx = love.math.random(-10, 10)
-	self.dy = love.math.random(-10, 10)
+	self.dx = love.math.random(-90, 90)
+	self.dy = love.math.random(-90, 90)
 
 	self.color = { 0, 0.5, 1, 1 }
 end
@@ -32,7 +32,7 @@ end
 
 function Hydrogen:moveInRandomDirection()
 	self.x = self.x + love.math.random(-0.5, 0.5) * self.size
-	self.y = self.y + love.math.random(-0.5, 0.) * self.size
+	self.y = self.y + love.math.random(-0.5, 0.5) * self.size
 end
 
 function Hydrogen:handleCollision(otherParticle)

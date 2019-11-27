@@ -17,3 +17,8 @@ An emitter creates particle instances and will add them to the array of
 particles. Therefore each emitter maintains the particles.
 
 After each particle updates its position, determine the Grid position
+
+window width: 800
+grid size: 10
+
+800 / 10 = 80

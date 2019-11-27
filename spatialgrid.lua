@@ -2,10 +2,11 @@
 SpatialGrid = class()
 
 function SpatialGrid:_init()
-	self.gridSize = 10
+	self.gridSize = 50
 	self.mousePosition = {0, 0}
 	self.obstacles = {}
 
+	self.particleCount = 0
 	self.grid = {}
 
 	self:reinitialize()
@@ -13,27 +14,57 @@ end
 
 -- Re-initializes the grid with empty values.
 function SpatialGrid:reinitialize()
-	-- TODO: size the rows/cols based on the screensize and gridsize stuff.
-	for row = 1, 90 do
+	self.particleCount = 0
+
+	local maxGridX = love.graphics.getWidth() / self.gridSize
+	local maxGridY = love.graphics.getHeight() / self.gridSize
+
+	for row = 1, maxGridY do
 		self.grid[row] = {}
-		for col = 1, 90 do
+		for col = 1, maxGridX do
 			self.grid[row][col] = {}
 		end
 	end
 end
 
 function SpatialGrid:addParticle(particle)
+	self.particleCount = self.particleCount + 1
+
+	local maxGridX = love.graphics.getWidth() / self.gridSize
+	local maxGridY = love.graphics.getHeight() / self.gridSize
+
 	-- 1. check what cells are occupied by this aabb
 	-- 2. add into grid[row][cell]
 	local minx = math.floor(particle.x / self.gridSize) + 1
 	local miny = math.floor(particle.y / self.gridSize) + 1
 
-	local maxx = math.floor((particle.x + particle.size) / self.gridSize) + 1
-	local maxy = math.floor((particle.y + particle.size) / self.gridSize) + 1
+	local maxx = math.min(maxGridX, math.floor((particle.x + particle.size) / self.gridSize) + 1)
+	local maxy = math.min(maxGridY, math.floor((particle.y + particle.size) / self.gridSize) + 1)
 
 	for col = minx, maxx do
 		for row = miny, maxy do
 			table.insert(self.grid[row][col], particle)
+		end
+	end
+end
+
+function SpatialGrid:checkCollisions()
+	local maxGridX = love.graphics.getWidth() / self.gridSize
+	local maxGridY = love.graphics.getHeight() / self.gridSize
+
+	for row = 1, maxGridY do
+		for col = 1, maxGridX do
+			local particles = self.grid[row][col]
+			for i = 1, #particles do
+				for j = i + 1, #particles do
+					local particle1 = particles[i]
+					local particle2 = particles[j]
+					if particle1:collidesWith(particle2) then
+						particle1:handleCollision(particle2)
+						particle2:handleCollision(particle1)
+					end
+				end
+			end
 		end
 	end
 end

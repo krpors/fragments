@@ -45,29 +45,30 @@ function StateFragments:keyPressed(key)
 	elseif key == 'k' then
 		print(collectgarbage("count"))
 		for i, v in ipairs(self.placedEmitters) do
-			print("Nilling")
+			print("Nilling", v)
 			v = nil
 		end
+		self.placedEmitters = nil
+		self.placedEmitters = {}
 		print(collectgarbage("count"))
 	end
 end
 
 function StateFragments:update(dt)
-	self.allParticles = {}
 	self.spatialGrid:reinitialize()
 
 	for i, emitter in ipairs(self.placedEmitters) do
 		emitter:update(dt)
 
-		-- Insert all particle refs into a big giant array so we can easily
-		-- do collision detection...
+		-- Add all particles to the spatial grid, for the broadphase collision
+		-- detection before narrowing it down.
 		for i, v in ipairs(emitter.particles) do
 			self.spatialGrid:addParticle(v)
 		end
-		-- table.copyinto(self.allParticles, emitter.particles)
 	end
 
-	self.spatialGrid:print()
+	-- self.spatialGrid:print()
+	self.spatialGrid:checkCollisions()
 
 	-- for _, p1 in ipairs(self.allParticles) do
 	-- 	for _, p2 in ipairs(self.allParticles) do
@@ -91,7 +92,7 @@ function StateFragments:draw()
 	love.graphics.print("FPS: " .. love.timer.getFPS())
 	love.graphics.print("KB used: " .. collectgarbage("count"), 0, 10)
 	love.graphics.print("Fragments", 0, 20)
-	love.graphics.print("# of particles: " .. #self.allParticles, 0, 30)
+	love.graphics.print("# of particles: " .. self.spatialGrid.particleCount, 0, 30)
 	local s = ""
 	local max = 1
 	for _, p in ipairs(self.currentEmitter.particles) do
