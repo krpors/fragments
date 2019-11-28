@@ -22,6 +22,11 @@ function StateFragments:_init()
 	self.allParticles = {}
 
 	self.spatialGrid = SpatialGrid()
+
+	self.mousePosition = {
+		x = 0,
+		y = 0,
+	}
 end
 
 
@@ -37,6 +42,7 @@ function StateFragments:mouseReleased(x, y, button, istouch, presses)
 end
 
 function StateFragments:mouseMoved(x, y, dx, dy, istouch)
+	self.mousePosition = { x = x, y = y }
 	self.spatialGrid.mousePosition = { x, y }
 end
 
@@ -71,6 +77,7 @@ function StateFragments:keyPressed(key)
 end
 
 function StateFragments:update(dt)
+	-- always reinitialize the grid for now
 	if self.paused then return end
 
 	self.spatialGrid:reinitialize()
@@ -85,7 +92,6 @@ function StateFragments:update(dt)
 		end
 	end
 
-	-- self.spatialGrid:print()
 	self.spatialGrid:checkCollisions()
 end
 
@@ -102,10 +108,14 @@ function StateFragments:draw()
 	local debugstr = string.format("FPS: %d\n", love.timer.getFPS())
 	debugstr = debugstr .. string.format("KB used: %d\n", collectgarbage("count"))
 	debugstr = debugstr .. string.format("Number of particles: %d\n", self.spatialGrid.particleCount)
+
+	local cell = self.spatialGrid:getCellAt(self.mousePosition.x, self.mousePosition.y)
+	local count = self.spatialGrid:getParticleCountAt(self.mousePosition.x, self.mousePosition.y)
+	debugstr = debugstr .. string.format("Number of particles at (%2d, %2d) = %3d\n", cell.row, cell.col, count)
+
 	if self.paused then
 		debugstr = debugstr .. "Paused!\n"
 	end
-	-- debugstr = debugstr .. "Particles at\n" .. self:spatialGrid:
 
 	love.graphics.print(debugstr, 0, 0)
 end

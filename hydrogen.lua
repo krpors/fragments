@@ -4,10 +4,10 @@ Hydrogen = class()
 function Hydrogen:_init()
 	self.name = "Hydrogen"
 
-	self.maxlife = 20
+	self.maxlife = 5
 	self.life = self.maxlife
 
-	self.size = 8
+	self.size = 5
 
 	self.x = 0
 	self.y = 0
@@ -102,7 +102,9 @@ function Hydrogen:draw()
 	self.color[4] = percentageLife
 
 	love.graphics.setColor(self.color)
-	love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
+	local size = self.size * percentageLife
+	love.graphics.circle('fill', self.x, self.y, size)
+	-- love.graphics.rectangle('fill', self.x, self.y, size, size)
 end
 
 -- =============================================================================

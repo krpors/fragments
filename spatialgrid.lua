@@ -89,6 +89,8 @@ end
 function SpatialGrid:getParticleCountAt(x, y)
 	local cell = self:getCellAt(x, y)
 
+	-- BUG: when pausing, then mousewheeling, this will index a nil value.
+	-- Probably because the grid is not reinitialized with new values.
 	return #self.grid[cell.row][cell.col]
 end
 
@@ -128,7 +130,26 @@ function SpatialGrid:drawObstacles()
 	end
 end
 
-function SpatialGrid:draw()
+-- For debugging purposes: draw the densities of each cell in the grid.
+function SpatialGrid:drawDensities()
+	-- #self.grid[cell.row][cell.col]
+	local gridw = love.graphics.getWidth() / self.gridSize
+	local gridh = love.graphics.getHeight() / self.gridSize
+	for row = 0, self.gridSize - 1 do
+		for col = 0, self.gridSize - 1 do
+			local x1 = col * gridw
+			local y1 = row * gridh
+
+			local particles = #self.grid[row+1][col+1]
+			local densityPercentage = particles / self.particleCount
+
+			love.graphics.setColor({ densityPercentage, 0, 0 , 1})
+			love.graphics.rectangle('fill', x1, y1, gridw, gridh)
+		end
+	end
+end
+
+function SpatialGrid:drawGrid()
 	love.graphics.setColor(0.4, 0.4, 0.4, 0.5)
 	love.graphics.setLineStyle("rough")
 	love.graphics.setLineWidth(1)
@@ -145,6 +166,10 @@ function SpatialGrid:draw()
 	for y = 0, h, incrementh do
 		love.graphics.line(0, y, w, y)
 	end
+end
 
+function SpatialGrid:draw()
+	self:drawDensities()
+	self:drawGrid()
 	self:drawObstacles()
 end
