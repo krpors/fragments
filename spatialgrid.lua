@@ -30,33 +30,48 @@ function SpatialGrid:reinitialize()
 	end
 end
 
-function SpatialGrid:addParticle(particle)
-	self.particleCount = self.particleCount + 1
-
+-- Get cell at a specific x,y position on the screen, based on the grid size.
+function SpatialGrid:getCellAt(x, y)
 	-- how many pixels are occopied per column and per row:
 	local pixPerColumn = love.graphics.getWidth() / self.gridSize
 	local pixPerRow = love.graphics.getHeight() / self.gridSize
 
-	-- determine the cell which is occupied by top-left corner of the entity
-	local minx = math.floor(particle.x / pixPerColumn) + 1
-	local miny = math.floor(particle.y / pixPerRow) + 1
+	local tx = math.floor(x / pixPerColumn) + 1
+	local ty = math.floor(y / pixPerRow) + 1
 
-	-- determine the cell which is occupied by the bottom-right corner:
-	local maxx = math.min(self.gridSize, math.floor((particle.x + particle.size) / pixPerColumn) + 1)
-	local maxy = math.min(self.gridSize, math.floor((particle.y + particle.size) / pixPerRow) + 1)
+	return {
+		row = ty,
+		col = tx
+	}
+end
+
+function SpatialGrid:addParticle(particle)
+	self.particleCount = self.particleCount + 1
+
+	-- cell at the topleft
+	local min = self:getCellAt(particle.x, particle.y)
+	-- cell at the bottom right
+	local max = self:getCellAt(particle.x + particle.size, particle.y + particle.size)
+
+	-- Don't go out of bounds.
+	max.col = math.min(self.gridSize, max.col)
+	max.row = math.min(self.gridSize, max.row)
 
 	-- add the entity to each occupied cell:
-	for col = minx, maxx do
-		for row = miny, maxy do
+	for col = min.col, max.col do
+		for row = min.row, max.row do
 			table.insert(self.grid[row][col], particle)
 		end
 	end
 end
 
 function SpatialGrid:checkCollisions()
+	-- Iterate through every cell in the grid
 	for row = 1, self.gridSize do
 		for col = 1, self.gridSize do
+			-- Check which particles are in this cell.
 			local particles = self.grid[row][col]
+			-- Do the narrow-phase collision detection in each cell.
 			for i = 1, #particles do
 				for j = i + 1, #particles do
 					local particle1 = particles[i]
@@ -69,6 +84,12 @@ function SpatialGrid:checkCollisions()
 			end
 		end
 	end
+end
+
+function SpatialGrid:getParticleCountAt(x, y)
+	local cell = self:getCellAt(x, y)
+
+	return #self.grid[cell.row][cell.col]
 end
 
 function SpatialGrid:print()

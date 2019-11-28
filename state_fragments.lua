@@ -87,17 +87,6 @@ function StateFragments:update(dt)
 
 	-- self.spatialGrid:print()
 	self.spatialGrid:checkCollisions()
-
-	-- for _, p1 in ipairs(self.allParticles) do
-	-- 	for _, p2 in ipairs(self.allParticles) do
-	-- 		if p1 ~= p2 then
-	-- 			if p1:collidesWith(p2) then
-	-- 				p1:handleCollision(p2)
-	-- 				p2:handleCollision(p1)
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
 end
 
 function StateFragments:draw()
@@ -109,20 +98,14 @@ function StateFragments:draw()
 
 	love.graphics.setFont(globals.gameFont)
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.print("FPS: " .. love.timer.getFPS())
-	love.graphics.print("KB used: " .. collectgarbage("count"), 0, 10)
-	love.graphics.print("Fragments", 0, 20)
-	love.graphics.print("# of particles: " .. self.spatialGrid.particleCount, 0, 30)
-	local s = ""
-	local max = 1
-	for _, p in ipairs(self.currentEmitter.particles) do
-		s = s .. string.format("%s\n", p)
-		max = max + 1
-		if max >= 10 then
-			s = s .. "(...)"
-			break
-		end
-	end
 
-	love.graphics.print(s, 0, 20)
+	local debugstr = string.format("FPS: %d\n", love.timer.getFPS())
+	debugstr = debugstr .. string.format("KB used: %d\n", collectgarbage("count"))
+	debugstr = debugstr .. string.format("Number of particles: %d\n", self.spatialGrid.particleCount)
+	if self.paused then
+		debugstr = debugstr .. "Paused!\n"
+	end
+	-- debugstr = debugstr .. "Particles at\n" .. self:spatialGrid:
+
+	love.graphics.print(debugstr, 0, 0)
 end
