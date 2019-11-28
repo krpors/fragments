@@ -2,7 +2,8 @@
 SpatialGrid = class()
 
 function SpatialGrid:_init()
-	self.gridSize = 50
+	-- Size of the grid (amount of dividers)
+	self.gridSize = 4
 	self.mousePosition = {0, 0}
 	self.obstacles = {}
 
@@ -19,9 +20,11 @@ function SpatialGrid:reinitialize()
 	local maxGridX = love.graphics.getWidth() / self.gridSize
 	local maxGridY = love.graphics.getHeight() / self.gridSize
 
-	for row = 1, maxGridY do
+	self.grid = {}
+
+	for row = 1, self.gridSize do
 		self.grid[row] = {}
-		for col = 1, maxGridX do
+		for col = 1, self.gridSize do
 			self.grid[row][col] = {}
 		end
 	end
@@ -30,17 +33,19 @@ end
 function SpatialGrid:addParticle(particle)
 	self.particleCount = self.particleCount + 1
 
-	local maxGridX = love.graphics.getWidth() / self.gridSize
-	local maxGridY = love.graphics.getHeight() / self.gridSize
+	-- how many pixels are occopied per column and per row:
+	local pixPerColumn = love.graphics.getWidth() / self.gridSize
+	local pixPerRow = love.graphics.getHeight() / self.gridSize
 
-	-- 1. check what cells are occupied by this aabb
-	-- 2. add into grid[row][cell]
-	local minx = math.floor(particle.x / self.gridSize) + 1
-	local miny = math.floor(particle.y / self.gridSize) + 1
+	-- determine the cell which is occupied by top-left corner of the entity
+	local minx = math.floor(particle.x / pixPerColumn) + 1
+	local miny = math.floor(particle.y / pixPerRow) + 1
 
-	local maxx = math.min(maxGridX, math.floor((particle.x + particle.size) / self.gridSize) + 1)
-	local maxy = math.min(maxGridY, math.floor((particle.y + particle.size) / self.gridSize) + 1)
+	-- determine the cell which is occupied by the bottom-right corner:
+	local maxx = math.min(self.gridSize, math.floor((particle.x + particle.size) / pixPerColumn) + 1)
+	local maxy = math.min(self.gridSize, math.floor((particle.y + particle.size) / pixPerRow) + 1)
 
+	-- add the entity to each occupied cell:
 	for col = minx, maxx do
 		for row = miny, maxy do
 			table.insert(self.grid[row][col], particle)
@@ -49,11 +54,8 @@ function SpatialGrid:addParticle(particle)
 end
 
 function SpatialGrid:checkCollisions()
-	local maxGridX = love.graphics.getWidth() / self.gridSize
-	local maxGridY = love.graphics.getHeight() / self.gridSize
-
-	for row = 1, maxGridY do
-		for col = 1, maxGridX do
+	for row = 1, self.gridSize do
+		for col = 1, self.gridSize do
 			local particles = self.grid[row][col]
 			for i = 1, #particles do
 				for j = i + 1, #particles do
@@ -71,6 +73,7 @@ end
 
 function SpatialGrid:print()
 	local s = ""
+	print("Gridsize:", self.gridSize)
 	for row = 1, #self.grid do
 		for col = 1, #self.grid[1] do
 			local z = self.grid[row][col]
@@ -112,17 +115,15 @@ function SpatialGrid:draw()
 	local w = love.graphics.getWidth()
 	local h = love.graphics.getHeight()
 
-	for x = 0, w, self.gridSize do
+	local incrementw = w / self.gridSize
+	for x = 0, w, incrementw do
 		love.graphics.line(x, 0, x, h)
 	end
 
-	for y = 0, h, self.gridSize do
+	local incrementh = h / self.gridSize
+	for y = 0, h, incrementh do
 		love.graphics.line(0, y, w, y)
 	end
-
-	love.graphics.setColor(1, 1, 1, 1)
-	local cursorPos = self:getCrud()
-	love.graphics.rectangle("fill", cursorPos[1], cursorPos[2], self.gridSize, self.gridSize)
 
 	self:drawObstacles()
 end

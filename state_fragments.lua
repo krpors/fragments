@@ -12,6 +12,8 @@ function StateFragments:_init()
 	table.insert(self.emitters, Emitter(function() return Hydrogen() end ))
 	table.insert(self.emitters, Emitter(function() return Oxygen() end ))
 
+	self.paused = false
+
 	self.placedEmitters = {}
 
 	self.nextEmitter = circular_iter(self.emitters)
@@ -35,6 +37,15 @@ function StateFragments:mouseReleased(x, y, button, istouch, presses)
 end
 
 function StateFragments:mouseMoved(x, y, dx, dy, istouch)
+	self.spatialGrid.mousePosition = { x, y }
+end
+
+function StateFragments:mouseWheelMoved(x, y)
+	if y > 0 then
+		self.spatialGrid.gridSize = self.spatialGrid.gridSize + 1
+	elseif y < 0 then
+		self.spatialGrid.gridSize = math.max(1, self.spatialGrid.gridSize - 1)
+	end
 end
 
 function StateFragments:keyPressed(key)
@@ -42,6 +53,11 @@ function StateFragments:keyPressed(key)
 		love.event.quit()
 	elseif key == ']'  then
 		self.currentEmitter = self.nextEmitter()
+	elseif key == 'd' then
+		print(self.spatialGrid.particleCount)
+		self.spatialGrid:print()
+	elseif key == 'p' then
+		self.paused = not self.paused
 	elseif key == 'k' then
 		print(collectgarbage("count"))
 		for i, v in ipairs(self.placedEmitters) do
@@ -55,6 +71,8 @@ function StateFragments:keyPressed(key)
 end
 
 function StateFragments:update(dt)
+	if self.paused then return end
+
 	self.spatialGrid:reinitialize()
 
 	for i, emitter in ipairs(self.placedEmitters) do
@@ -83,6 +101,8 @@ function StateFragments:update(dt)
 end
 
 function StateFragments:draw()
+	self.spatialGrid:draw()
+
 	for i, emitter in ipairs(self.placedEmitters) do
 		emitter:draw()
 	end

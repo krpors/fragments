@@ -12,13 +12,11 @@ mousePosition = { 0, 0 }
 
 gamestate = StateFragments()
 
-grid = SpatialGrid()
-
 function love.load()
 	local glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-=_+|/\\:;'\"<>,.?"
 	globals.gameFont = love.graphics.newImageFont("font.png", glyphs, 2)
 	love.graphics.setDefaultFilter("nearest", "nearest")
-	love.mouse.setVisible(false)
+	-- love.mouse.setVisible(false)
 
 	effect = love.graphics.newShader([[
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
@@ -35,8 +33,6 @@ end
 
 
 function love.draw()
-	grid:draw()
-
 	love.graphics.setShader()
 	gamestate:draw()
 
@@ -58,21 +54,11 @@ end
 
 function love.mousemoved(x, y, dx, dy, istouch)
 	mousePosition = { x, y }
-	grid.mousePosition = { x, y }
-
 	gamestate:mouseMoved(x, y, dx, dy, istouch)
 end
 
 function love.wheelmoved(x, y)
-	if y > 0 then
-		grid.gridSize = grid.gridSize + 1
-	elseif y < 0 then
-		grid.gridSize = grid.gridSize - 1
-		-- amdgpu: The CS has been canceled because the context was lost
-		if grid.gridSize <= 0 then
-			grid.gridSize = 1
-		end
-	end
+	gamestate:mouseWheelMoved(x, y)
 end
 
 function love.keypressed(key)
