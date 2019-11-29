@@ -3,6 +3,7 @@ require("spatialgrid")
 require("emitter")
 require("hydrogen")
 require("oxygen")
+require("lava")
 
 StateFragments = class()
 
@@ -11,6 +12,7 @@ function StateFragments:_init()
 	self.emitters = {}
 	table.insert(self.emitters, Emitter(function() return Hydrogen() end ))
 	table.insert(self.emitters, Emitter(function() return Oxygen() end ))
+	table.insert(self.emitters, Emitter(function() return Lava() end ))
 
 	self.paused = false
 
@@ -32,10 +34,19 @@ end
 
 function StateFragments:mousePressed(x, y, button, istouch, presses)
 	-- self.currentEmitter:setEmitting(true)
-	local e = Emitter(function() return Hydrogen() end )
-	e:emitAt(x, y)
-	e:setEmitting(true)
-	table.insert(self.placedEmitters, e)
+	if button == 1 then
+		local e = Emitter(function() return Hydrogen() end )
+		e:emitAt(x, y)
+		e:setEmitting(true)
+		table.insert(self.placedEmitters, e)
+	elseif button == 2 then
+		local e = Emitter(function() return Lava() end )
+		e:emitAt(x, y)
+		e:setEmitting(true)
+		table.insert(self.placedEmitters, e)
+	end
+
+
 end
 
 function StateFragments:mouseReleased(x, y, button, istouch, presses)

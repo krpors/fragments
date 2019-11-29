@@ -5,7 +5,7 @@ Oxygen = class()
 function Oxygen:_init()
 	self.name = "Oxygen"
 
-	self.maxlife = 5
+	self.maxlife = 1
 	self.life = self.maxlife
 
 	self.size = 3

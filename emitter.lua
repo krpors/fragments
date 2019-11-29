@@ -19,6 +19,7 @@ function Emitter:_init(generator)
 	self.emitting = false
 	self.generator = generator
 	self.multiplier = 1
+	self.particleTimer = 0
 	-- The origin of the emitter:
 	self.origin = {
 		x = 0,
@@ -47,9 +48,11 @@ function Emitter:addNewParticle()
 end
 
 function Emitter:update(dt)
+	self.particleTimer  = self.particleTimer + dt
 	-- If we are emitting particles (i.e. clicked and stuff), start appending
 	-- new particles to the table.
-	if self.emitting then
+	if self.emitting and self.particleTimer >= 0.2 then
+		self.particleTimer = 0
 		self:addNewParticle()
 	end
 

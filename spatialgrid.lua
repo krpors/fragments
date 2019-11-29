@@ -169,7 +169,7 @@ function SpatialGrid:drawGrid()
 end
 
 function SpatialGrid:draw()
-	self:drawDensities()
+	-- self:drawDensities()
 	self:drawGrid()
 	self:drawObstacles()
 end

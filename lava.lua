@@ -1,13 +1,14 @@
 require("class")
-Hydrogen = class()
 
-function Hydrogen:_init()
-	self.name = "Hydrogen"
+Lava = class()
+
+function Lava:_init()
+	self.name = "Lava"
 
 	self.maxlife = 5
 	self.life = self.maxlife
 
-	self.size = 5
+	self.size = 8
 
 	self.x = 0
 	self.y = 0
@@ -15,54 +16,53 @@ function Hydrogen:_init()
 	self.prevx = 0
 	self.prevy = 0
 
-	self.dx = love.math.random(-90, 90)
-	self.dy = love.math.random(-90, 90)
+	self.dx = love.math.random(-100, 100)
+	self.dy = love.math.random(0, 80)
 
-	self.color = { 0, 0.5, 1, 1 }
+	self.color = { 1, 0, 0, 1 }
 end
 
-function Hydrogen:__tostring()
-	return string.format("Hydrogen (%d, %d), life: %f", self.x, self.y, self.life)
+function Lava:__tostring()
+	return string.format("Lava (%d, %d), life: %f", self.x, self.y, self.life)
 end
 
-function Hydrogen:moveToPreviousPosition()
-	self.x = self.prevx
-	self.y = self.prevy
-end
-
-function Hydrogen:moveInRandomDirection()
+function Lava:moveInRandomDirection()
 	self.x = self.x + love.math.random(-0.5, 0.5) * self.size
 	self.y = self.y + love.math.random(-0.5, 0.5) * self.size
 end
 
-function Hydrogen:handleCollision(otherParticle)
-	if otherParticle.is_a[Hydrogen] then
-		self:moveInRandomDirection()
-	elseif otherParticle.is_a[Oxygen] then
-		self.dx = 0
-		self.dy = 0
-		self.life = 0
+function Lava:handleCollision(otherParticle)
+	if self.name == otherParticle.name then
+		-- is the current particle above the other particle? Then align ourselves
+		-- with the other particle's y axis
+		if self.y < otherParticle.y then
+			self.dx = 0
+			self.dy = 0
+			print("lol")
+			self.y = otherParticle.y - self.size - 0.1
+		end
 	end
 end
 
 -- Returns true when this particle collides with another particle
-function Hydrogen:collidesWith(otherParticle)
+function Lava:collidesWith(otherParticle)
 	-- just do a simple bounding box collision detection
 	return
 		    self.x < otherParticle.x + otherParticle.size
 		and otherParticle.x < self.x + self.size
 		and self.y < otherParticle.y + otherParticle.size
-		and otherParticle.y < self.y + self.size
+		and otherParticle.y < self.y + self.size - 1
 end
 
 -- A particle knows how to update itself every iteration.
-function Hydrogen:update(dt)
+function Lava:update(dt)
 	-- first make sure we have the previous positions saved
 	self.prevx = self.x
 	self.prevy = self.y
 
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
+	self.dy = self.dy + 9
 
 	-- Diminish the life by the time delta.
     self.life = self.life - dt
@@ -72,7 +72,7 @@ end
 
 -- Will check the particle bounds, and if the window edges are hit, invert
 -- the delta's, when applicable.
-function Hydrogen:checkParticleBounds()
+function Lava:checkParticleBounds()
 	-- Whether there is gravity or not, invert the dx of the particle.
 	if self.x < 0 then
 		self.x = 0
@@ -93,22 +93,17 @@ function Hydrogen:checkParticleBounds()
 	if self.y >= love.graphics.getHeight() then
 		-- First 'clamp' the value to the maximum height.
 		self.y = love.graphics.getHeight() - self.size
-
-		-- If there is zero gravity, it should act like a gas. In that case
-		-- invert the y axis at all times.
-		self.dy = -math.abs(self.dy)
-		self.y = love.graphics.getHeight() - self.size
 	end
 end
 
-function Hydrogen:draw()
+function Lava:draw()
 	local percentageLife = self.life / self.maxlife
-	self.color[4] = percentageLife
+	-- self.color[4] = percentageLife
 
+	local size = self.size-- + percentageLife
 	love.graphics.setColor(self.color)
-	local size = self.size * percentageLife
-	love.graphics.circle('fill', self.x, self.y, size)
-	-- love.graphics.rectangle('fill', self.x, self.y, size, size)
+	love.graphics.rectangle('fill', self.x, self.y, size, size)
+	-- love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
 end
 
 -- =============================================================================
