@@ -2,10 +2,15 @@ require("class")
 
 Lava = class()
 
+local directions = {
+	left = 0,
+	right = 1,
+}
+
 function Lava:_init()
 	self.name = "Lava"
 
-	self.maxlife = 5
+	self.maxlife = 60
 	self.life = self.maxlife
 
 	self.size = 8
@@ -16,8 +21,11 @@ function Lava:_init()
 	self.prevx = 0
 	self.prevy = 0
 
-	self.dx = love.math.random(-100, 100)
+	self.dx = love.math.random(-300, 300)
 	self.dy = love.math.random(0, 80)
+
+	self.xvelocity = love.math.random(100)
+	self.direction = love.math.random(0, 1)
 
 	self.color = { 1, 0, 0, 1 }
 end
@@ -47,23 +55,21 @@ function Lava:handleCollision(otherParticle)
 		if self.x < otherParticle.x then
 			-- we are moving to the right, meaning we must have hit a particle
 			-- to the right of us.
-			if self.dx > 0 then
+			if self.direction == directions.right then
 				-- bounce back
-				self.dx = -self.dx
+				self.direction = directions.left
 			-- moving to the left, so a particle with a greater speed than us
 			-- hit us, from the right.
-			elseif self.dx < 0 then
-				self.dx = self.dx - 10
+			else
 			end
 		-- self is to the right of the particle.
 		elseif self.x > otherParticle.x then
 			-- we are moving to the right, and we are hit from the left by a
 			-- particle with a greater velocity.
-			if self.dx > 0 then
-				self.dx = self.dx + 10
+			if self.direction == directions.right then
 			-- we are moving to the left, bounce
-			elseif self.dx < 0 then
-				self.dx = -self.dx
+			else
+				self.direction = directions.right
 			end
 		end
 	end
@@ -85,7 +91,15 @@ function Lava:update(dt)
 	self.prevx = self.x
 	self.prevy = self.y
 
-	self.x = self.x + self.dx * dt
+	if self.direction == directions.left then
+		self.x = self.x - self.xvelocity * dt
+	else
+		self.x = self.x + self.xvelocity * dt
+	end
+
+	-- decrease the velocity, no matter what direction we are going
+	-- self.xvelocity = math.max(self.xvelocity - 10 * dt, 0)
+
 	self.y = self.y + self.dy * dt
 	self.dy = self.dy + 9
 
@@ -101,12 +115,12 @@ function Lava:checkParticleBounds()
 	-- Whether there is gravity or not, invert the dx of the particle.
 	if self.x < 0 then
 		self.x = 0
-		self.dx = math.abs(self.dx)
+		self.direction = directions.right
 	end
 
-	if self.x >= love.graphics.getWidth() then
+	if self.x + self.size >= love.graphics.getWidth() then
 		self.x = love.graphics.getWidth() - self.size
-		self.dx = -math.abs(self.dx)
+		self.direction = directions.left
 	end
 
 	if self.y <= 0 then
@@ -127,7 +141,12 @@ function Lava:draw()
 	-- self.color[4] = percentageLife
 
 	local size = self.size-- + percentageLife
-	love.graphics.setColor(self.color)
+
+	local heightpercentage = self.y / love.graphics.getHeight()
+
+	local color = { 1, 1, heightpercentage, 1}
+
+	love.graphics.setColor(color)
 	love.graphics.rectangle('fill', self.x, self.y, size, size)
 	-- love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
 

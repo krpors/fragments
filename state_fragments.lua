@@ -38,10 +38,12 @@ function StateFragments:_init()
 	self.testParticles[1].dx = 20
 	self.testParticles[1].x = 100
 	self.testParticles[1].y = 100
+	self.testParticles[1].xvelocity = 10
 
 	self.testParticles[2].dx = 50
 	self.testParticles[2].x = 10
 	self.testParticles[2].y = 100
+	self.testParticles[2].xvelocity = 30
 end
 
 
