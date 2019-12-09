@@ -90,7 +90,7 @@ function Hydrogen:checkParticleBounds()
 	end
 
 	-- Check if the self goes beyond the screen's height.
-	if self.y >= love.graphics.getHeight() then
+	if self.y + self.size >= love.graphics.getHeight() then
 		-- First 'clamp' the value to the maximum height.
 		self.y = love.graphics.getHeight() - self.size
 

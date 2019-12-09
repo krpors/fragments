@@ -23,7 +23,10 @@ function Lava:_init()
 end
 
 function Lava:__tostring()
-	return string.format("Lava (%d, %d), life: %f", self.x, self.y, self.life)
+	local s = [[Lava (%d, %d)
+- Life   = %f
+- Dx, Dy = (%2d, %2d)]]
+	return string.format(s, self.x, self.y, self.life, self.dx, self.dy)
 end
 
 function Lava:moveInRandomDirection()
@@ -36,10 +39,32 @@ function Lava:handleCollision(otherParticle)
 		-- is the current particle above the other particle? Then align ourselves
 		-- with the other particle's y axis
 		if self.y < otherParticle.y then
-			self.dx = 0
 			self.dy = 0
-			print("lol")
 			self.y = otherParticle.y - self.size - 0.1
+		end
+
+		-- Self is left of the other particle, check velocities.
+		if self.x < otherParticle.x then
+			-- we are moving to the right, meaning we must have hit a particle
+			-- to the right of us.
+			if self.dx > 0 then
+				-- bounce back
+				self.dx = -self.dx
+			-- moving to the left, so a particle with a greater speed than us
+			-- hit us, from the right.
+			elseif self.dx < 0 then
+				self.dx = self.dx - 10
+			end
+		-- self is to the right of the particle.
+		elseif self.x > otherParticle.x then
+			-- we are moving to the right, and we are hit from the left by a
+			-- particle with a greater velocity.
+			if self.dx > 0 then
+				self.dx = self.dx + 10
+			-- we are moving to the left, bounce
+			elseif self.dx < 0 then
+				self.dx = -self.dx
+			end
 		end
 	end
 end
@@ -90,9 +115,10 @@ function Lava:checkParticleBounds()
 	end
 
 	-- Check if the self goes beyond the screen's height.
-	if self.y >= love.graphics.getHeight() then
+	if self.y + self.size >= love.graphics.getHeight() then
 		-- First 'clamp' the value to the maximum height.
 		self.y = love.graphics.getHeight() - self.size
+		self.dy = 0
 	end
 end
 
@@ -104,6 +130,13 @@ function Lava:draw()
 	love.graphics.setColor(self.color)
 	love.graphics.rectangle('fill', self.x, self.y, size, size)
 	-- love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
+
+
+
+	-- love.graphics.setDefaultFilter("nearest", "nearest", 1)
+	-- love.graphics.setFont(globals.gameFont)
+	-- love.graphics.setColor({1,1,1,1})
+	-- love.graphics.print(string.format("%s", self), math.floor(self.x), math.floor(self.y - 40))
 end
 
 -- =============================================================================

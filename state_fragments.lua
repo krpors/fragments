@@ -29,6 +29,19 @@ function StateFragments:_init()
 		x = 0,
 		y = 0,
 	}
+
+	self.testParticles = {}
+
+	table.insert(self.testParticles, Lava())
+	table.insert(self.testParticles, Lava())
+
+	self.testParticles[1].dx = 20
+	self.testParticles[1].x = 100
+	self.testParticles[1].y = 100
+
+	self.testParticles[2].dx = 50
+	self.testParticles[2].x = 10
+	self.testParticles[2].y = 100
 end
 
 
@@ -93,6 +106,12 @@ function StateFragments:update(dt)
 
 	self.spatialGrid:reinitialize()
 
+	for _, particle in ipairs(self.testParticles) do
+		particle:update(dt)
+
+		self.spatialGrid:addParticle(particle)
+	end
+
 	for i, emitter in ipairs(self.placedEmitters) do
 		emitter:update(dt)
 
@@ -111,6 +130,10 @@ function StateFragments:draw()
 
 	for i, emitter in ipairs(self.placedEmitters) do
 		emitter:draw()
+	end
+
+	for _, particle in ipairs(self.testParticles) do
+		particle:draw()
 	end
 
 	love.graphics.setFont(globals.gameFont)
