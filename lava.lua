@@ -25,7 +25,7 @@ function Lava:_init()
 	self.dy = love.math.random(0, 80)
 
 	self.xvelocity = love.math.random(100)
-	self.direction = love.math.random(0, 1)
+	self.direction = directions.right
 
 	self.color = { 1, 0, 0, 1 }
 end
@@ -52,26 +52,32 @@ function Lava:handleCollision(otherParticle)
 		end
 
 		-- Self is left of the other particle, check velocities.
-		if self.x < otherParticle.x then
-			-- we are moving to the right, meaning we must have hit a particle
-			-- to the right of us.
-			if self.direction == directions.right then
-				-- bounce back
-				self.direction = directions.left
-			-- moving to the left, so a particle with a greater speed than us
-			-- hit us, from the right.
-			else
-			end
-		-- self is to the right of the particle.
-		elseif self.x > otherParticle.x then
-			-- we are moving to the right, and we are hit from the left by a
-			-- particle with a greater velocity.
-			if self.direction == directions.right then
-			-- we are moving to the left, bounce
-			else
-				self.direction = directions.right
-			end
+		if self.x < otherParticle.x and self.direction == directions.right then
+			self.direction = directions.left
+		elseif self.x > otherParticle.x and self.direction == directions.left then
+			self.direction = directions.right
 		end
+
+		-- if self.x < otherParticle.x then
+		-- 	-- we are moving to the right, meaning we must have hit a particle
+		-- 	-- to the right of us.
+		-- 	if self.direction == directions.right then
+		-- 		-- bounce back
+		-- 		self.direction = directions.left
+		-- 	-- moving to the left, so a particle with a greater speed than us
+		-- 	-- hit us, from the right.
+		-- 	else
+		-- 	end
+		-- -- self is to the right of the particle.
+		-- elseif self.x > otherParticle.x then
+		-- 	-- we are moving to the right, and we are hit from the left by a
+		-- 	-- particle with a greater velocity.
+		-- 	if self.direction == directions.right then
+		-- 	-- we are moving to the left, bounce
+		-- 	else
+		-- 		self.direction = directions.right
+		-- 	end
+		-- end
 	end
 end
 
