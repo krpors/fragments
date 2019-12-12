@@ -24,7 +24,7 @@ function love.load()
 	-- texture = the image itself being drawn
 	-- texture_coords = normalized (0.0, 1.0) coords
 	-- screen_coords =  not-normalized screen coords
-	effect = love.graphics.newShader("shaders/grayscale.fs")
+	effect = love.graphics.newShader("shaders/boxblur.frag")
 end
 
 local t = 0
@@ -38,8 +38,8 @@ end
 function love.draw()
 	-- love.graphics.setShader()
 	love.graphics.setShader(effect)
-
 	love.graphics.draw(image, 20, 20)
+	love.graphics.line(0, 0, 200, 100)
 	gamestate:draw()
 
 	-- LOOK AT THE PRETTY COLORS!
@@ -74,6 +74,10 @@ function love.keypressed(key)
 		gamestate = StateParticlePlayer()
 	elseif key == 'f2' then
 		gamestate = StateFragments()
+	elseif key == 'r' then
+		status, message = love.graphics.validateShader(false, "shaders/boxblur.frag")
+		print(status)
+		print(message)
 	end
 
 	gamestate:keyPressed(key)
