@@ -12,6 +12,7 @@ image = love.graphics.newImage("logo.png")
 
 mousePosition = { 0, 0 }
 
+canvas = nil
 gamestate = StateFragments()
 
 function love.load()
@@ -25,6 +26,8 @@ function love.load()
 	-- texture_coords = normalized (0.0, 1.0) coords
 	-- screen_coords =  not-normalized screen coords
 	effect = love.graphics.newShader("shaders/boxblur.frag")
+	-- effect = love.graphics.newShader("shaders/moonshine.frag")
+	canvas = love.graphics.newCanvas(800, 600)
 end
 
 local t = 0
@@ -36,15 +39,19 @@ end
 
 
 function love.draw()
-	-- love.graphics.setShader()
+	-- Draw everything to the canvas
+	love.graphics.setCanvas(canvas)
+	love.graphics.clear()
+	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setShader(effect)
 	love.graphics.draw(image, 20, 20)
-	love.graphics.line(0, 0, 200, 100)
 	gamestate:draw()
 
-	-- LOOK AT THE PRETTY COLORS!
+	-- re-enable drawing to the main screen
+	love.graphics.setCanvas()
 
-	-- love.graphics.rectangle('fill', 10,305,780,285)
+	-- last but not least, draw the canvas to screen
+	love.graphics.draw(canvas)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
@@ -78,6 +85,9 @@ function love.keypressed(key)
 		status, message = love.graphics.validateShader(false, "shaders/boxblur.frag")
 		print(status)
 		print(message)
+		if status then
+			effect = love.graphics.newShader("shaders/boxblur.frag")
+		end
 	end
 
 	gamestate:keyPressed(key)
