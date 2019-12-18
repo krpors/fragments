@@ -5,63 +5,54 @@ require("hydrogen")
 require("oxygen")
 require("lava")
 
+-- A ParticleFactory is merely a simple container with a name and the generator
+-- function for creating new particles. This generator function can then be
+-- passed to the emitter when dropping an emitter on the 'playing field'.
+ParticleFactory = class()
+
+function ParticleFactory:_init(name, generatorFunction)
+	self.name = name
+	self.generatorFunction = generatorFunction
+end
+
+-- This is the state class for the main gameplay.
 StateFragments = class()
 
--- This is the actual Fragments implementation (fluidfun).
 function StateFragments:_init()
-	self.emitters = {}
-	table.insert(self.emitters, Emitter(function() return Hydrogen() end ))
-	table.insert(self.emitters, Emitter(function() return Oxygen() end ))
-	table.insert(self.emitters, Emitter(function() return Lava() end ))
+	-- The particle factories which can be selected by the user.
+	self.particleFactories = {}
+	table.insert(self.particleFactories, ParticleFactory("hydrogen", function() return Hydrogen() end ))
+	table.insert(self.particleFactories, ParticleFactory("lava", function() return Lava() end ))
+	table.insert(self.particleFactories, ParticleFactory("oxygen", function() return Oxygen() end ))
+
+	-- The circular iterator and the current selected particle factory.
+	self.nextParticleFactory = circular_iter(self.particleFactories)
+	self.currentParticleFactory = self.nextParticleFactory()
 
 	self.paused = false
 
+	-- The emitters placed on the screen.
 	self.placedEmitters = {}
 
-	self.nextEmitter = circular_iter(self.emitters)
-	self.currentEmitter = self.nextEmitter()
-
-	self.allParticles = {}
-
+	-- The grid which is used for broad-phased collision detection.
 	self.spatialGrid = SpatialGrid()
 
 	self.mousePosition = {
 		x = 0,
 		y = 0,
 	}
-
-	self.testParticles = {}
-
-	table.insert(self.testParticles, Lava())
-	table.insert(self.testParticles, Lava())
-
-	self.testParticles[1].dx = 20
-	self.testParticles[1].x = 100
-	self.testParticles[1].y = 100
-	self.testParticles[1].xvelocity = 10
-
-	self.testParticles[2].dx = 50
-	self.testParticles[2].x = 10
-	self.testParticles[2].y = 100
-	self.testParticles[2].xvelocity = 30
 end
 
 
 function StateFragments:mousePressed(x, y, button, istouch, presses)
-	-- self.currentEmitter:setEmitting(true)
 	if button == 1 then
-		local e = Emitter(function() return Hydrogen() end )
-		e:emitAt(x, y)
-		e:setEmitting(true)
-		table.insert(self.placedEmitters, e)
-	elseif button == 2 then
-		local e = Emitter(function() return Lava() end )
+		-- Create a new Emitter, using the generator function of the current
+		-- factory so it starts spewing stuff at the given x,y position.
+		local e = Emitter(self.currentParticleFactory.generatorFunction)
 		e:emitAt(x, y)
 		e:setEmitting(true)
 		table.insert(self.placedEmitters, e)
 	end
-
-
 end
 
 function StateFragments:mouseReleased(x, y, button, istouch, presses)
@@ -78,13 +69,15 @@ function StateFragments:mouseWheelMoved(x, y)
 	elseif y < 0 then
 		self.spatialGrid.gridSize = math.max(1, self.spatialGrid.gridSize - 1)
 	end
+
+	self.spatialGrid:reinitialize()
 end
 
 function StateFragments:keyPressed(key)
 	if key == 'escape' then
 		love.event.quit()
 	elseif key == ']'  then
-		self.currentEmitter = self.nextEmitter()
+		self.currentParticleFactory = self.nextParticleFactory()
 	elseif key == 'd' then
 		print(self.spatialGrid.particleCount)
 		self.spatialGrid:print()
@@ -108,12 +101,6 @@ function StateFragments:update(dt)
 
 	self.spatialGrid:reinitialize()
 
-	for _, particle in ipairs(self.testParticles) do
-		particle:update(dt)
-
-		self.spatialGrid:addParticle(particle)
-	end
-
 	for i, emitter in ipairs(self.placedEmitters) do
 		emitter:update(dt)
 
@@ -134,10 +121,6 @@ function StateFragments:draw()
 		emitter:draw()
 	end
 
-	for _, particle in ipairs(self.testParticles) do
-		particle:draw()
-	end
-
 	love.graphics.setFont(globals.gameFont)
 	love.graphics.setColor(1, 1, 1, 1)
 
@@ -148,6 +131,8 @@ function StateFragments:draw()
 	local cell = self.spatialGrid:getCellAt(self.mousePosition.x, self.mousePosition.y)
 	local count = self.spatialGrid:getParticleCountAt(self.mousePosition.x, self.mousePosition.y)
 	debugstr = debugstr .. string.format("Number of particles at (%2d, %2d) = %3d\n", cell.row, cell.col, count)
+
+	debugstr = debugstr .. string.format("Current generator: %s\n", self.currentParticleFactory.name)
 
 	if self.paused then
 		debugstr = debugstr .. "Paused!\n"

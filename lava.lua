@@ -156,8 +156,6 @@ function Lava:draw()
 	love.graphics.rectangle('fill', self.x, self.y, size, size)
 	-- love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
 
-
-
 	-- love.graphics.setDefaultFilter("nearest", "nearest", 1)
 	-- love.graphics.setFont(globals.gameFont)
 	-- love.graphics.setColor({1,1,1,1})

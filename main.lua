@@ -20,11 +20,6 @@ function love.load()
 	globals.gameFont = love.graphics.newImageFont("font.png", glyphs, 2)
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	-- love.mouse.setVisible(false)
-
-	-- vec4 color = love.graphics.setColor().
-	-- texture = the image itself being drawn
-	-- texture_coords = normalized (0.0, 1.0) coords
-	-- screen_coords =  not-normalized screen coords
 	effect = love.graphics.newShader("shaders/boxblur.frag")
 	-- effect = love.graphics.newShader("shaders/moonshine.frag")
 	canvas = love.graphics.newCanvas(800, 600)
@@ -43,8 +38,8 @@ function love.draw()
 	love.graphics.setCanvas(canvas)
 	love.graphics.clear()
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.setShader(effect)
-	love.graphics.draw(image, 20, 20)
+	-- love.graphics.setShader(effect)
+	-- love.graphics.draw(image, 20, 20)
 	gamestate:draw()
 
 	-- re-enable drawing to the main screen

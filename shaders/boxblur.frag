@@ -8,7 +8,7 @@ vec4 effect(vec4 color, Image tex, vec2 tc, vec2 sc) {
     vec4 topright = Texel(tex, (tc + vec2(1.0,  -1.0) / scale));
 
     vec4 left     = Texel(tex, (tc + vec2(-1.0, 0) / scale));
-    vec4 curr     = Texel(tex, tc) * color;
+    vec4 curr     = Texel(tex, tc);
     vec4 right    = Texel(tex, (tc + vec2(1.0, 0) / scale));
 
     vec4 botleft  = Texel(tex, (tc + vec2(-1.0, 1.0) / scale));
