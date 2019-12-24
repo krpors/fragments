@@ -108,6 +108,9 @@ function StateParticlePlayer:mouseMoved(x, y, dx, dy, istouch)
 	self.currentGenerator.origin = {x, y}
 end
 
+function StateParticlePlayer:mouseWheelMoved(x, y)
+end
+
 function StateParticlePlayer:keyPressed(key)
 	if key == 'escape' then
 		love.event.quit()

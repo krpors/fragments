@@ -18,6 +18,7 @@ gamestate = StateFragments()
 function love.load()
 	local glyphs = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-=_+|/\\:;'\"<>,.?"
 	globals.gameFont = love.graphics.newImageFont("font.png", glyphs, 2)
+
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	-- love.mouse.setVisible(false)
 	effect = love.graphics.newShader("shaders/boxblur.frag")
@@ -72,6 +73,9 @@ end
 function love.keypressed(key)
 	if key == 'escape' then
 		love.event.quit()
+	elseif key == 'f' then
+		love.window.setFullscreen(true, "desktop")
+		canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
 	elseif key == 'f1' then
 		gamestate = StateParticlePlayer()
 	elseif key == 'f2' then
