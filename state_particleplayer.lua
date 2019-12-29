@@ -77,13 +77,13 @@ function StateParticlePlayer:createGenerators()
 
 	fifth = ParticleGenerator()
 	fifth.name = "Da Last One"
-	fifth.continuous = false
-	fifth.maxlife = 3
-	fifth.delta.x = { -20, 490 }
-	fifth.delta.y = { -20, 10 }
+	fifth.continuous = true
+	fifth.maxlife = 5
+	fifth.delta.x = { -30, 30 }
+	fifth.delta.y = { -5, 50 }
 	fifth.gravity = -9.8
-	fifth.particleCount = 30
-	fifth.maxradius = 2
+	fifth.particleCount = 800
+	fifth.maxradius = 15
 	fifth.colorfunction = function(lifepercentage)
 		return { lifepercentage, 0.5, lifepercentage, lifepercentage }
 	end

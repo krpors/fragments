@@ -21,7 +21,7 @@ function love.load()
 
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	-- love.mouse.setVisible(false)
-	effect = love.graphics.newShader("shaders/boxblur.frag")
+	-- effect = love.graphics.newShader("shaders/radialblur.frag")
 	-- effect = love.graphics.newShader("shaders/moonshine.frag")
 	canvas = love.graphics.newCanvas(800, 600)
 end
@@ -39,7 +39,7 @@ function love.draw()
 	love.graphics.setCanvas(canvas)
 	love.graphics.clear()
 	love.graphics.setColor(1, 1, 1, 1)
-	-- love.graphics.setShader(effect)
+	love.graphics.setShader(effect)
 	-- love.graphics.draw(image, 20, 20)
 	gamestate:draw()
 

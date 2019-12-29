@@ -43,6 +43,13 @@ function Lava:moveInRandomDirection()
 end
 
 function Lava:handleCollision(otherParticle)
+	if otherParticle.name == "Block" then
+		self.dy = 0
+		self.x = self.prevx
+		self.y = self.prevy
+		return
+	end
+
 	if self.name == otherParticle.name then
 		-- is the current particle above the other particle? Then align ourselves
 		-- with the other particle's y axis
