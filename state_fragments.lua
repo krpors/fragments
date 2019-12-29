@@ -52,6 +52,8 @@ function StateFragments:_init()
 	b.x = 200
 	b.y = 100
 	table.insert(self.placedBlocks, b)
+
+
 end
 
 

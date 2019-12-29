@@ -3,11 +3,6 @@ require("particle")
 
 Lava = class(Particle)
 
-local directions = {
-	left = 0,
-	right = 1,
-}
-
 function Lava:_init()
 	self.name = "Lava"
 
@@ -22,11 +17,8 @@ function Lava:_init()
 	self.prevx = 0
 	self.prevy = 0
 
-	self.dx = love.math.random(-300, 300)
+	self.dx = love.math.random(-100, 100)
 	self.dy = love.math.random(0, 80)
-
-	self.xvelocity = love.math.random(100)
-	self.direction = directions.right
 
 	self.color = { 1, 0, 0, 1 }
 end
@@ -36,11 +28,6 @@ function Lava:__tostring()
 - Life   = %f
 - Dx, Dy = (%2d, %2d)]]
 	return string.format(s, self.x, self.y, self.life, self.dx, self.dy)
-end
-
-function Lava:moveInRandomDirection()
-	self.x = self.x + love.math.random(-0.5, 0.5) * self.size
-	self.y = self.y + love.math.random(-0.5, 0.5) * self.size
 end
 
 function Lava:handleCollision(otherParticle)
@@ -54,32 +41,23 @@ function Lava:handleCollision(otherParticle)
 	if self.name == otherParticle.name then
 		-- is the current particle above the other particle? Then align ourselves
 		-- with the other particle's y axis
-		if self.y < otherParticle.y then
+		-- if self.y < otherParticle.y then
+		-- 	self.dy = 0
+		-- 	self.y = otherParticle.y - self.size - 0.1
+		-- end
+		if self:collidesWithTopOf(otherParticle) then
 			self.dy = 0
 			self.y = otherParticle.y - self.size - 0.1
 		end
 
-
-
-		-- Self is left of the other particle, check velocities.
-		if self.x < otherParticle.x and self.direction == directions.right then
-			self.direction = directions.left
-		elseif self.x > otherParticle.x and self.direction == directions.left then
-			self.direction = directions.right
+		if self:collidesWithLeftOf(otherParticle) or self:collidesWithRightOf(otherParticle) then
+			print("yep")
+			self.dx = -self.dx
+			self.x = self.prevx
 		end
 
 	end
 end
-
--- -- Returns true when this particle collides with another particle
--- function Lava:collidesWith(otherParticle)
--- 	-- just do a simple bounding box collision detection
--- 	return
--- 		    self.x < otherParticle.x + otherParticle.size
--- 		and otherParticle.x < self.x + self.size
--- 		and self.y < otherParticle.y + otherParticle.size
--- 		and otherParticle.y < self.y + self.size - 1
--- end
 
 -- A particle knows how to update itself every iteration.
 function Lava:update(dt)
@@ -87,15 +65,7 @@ function Lava:update(dt)
 	self.prevx = self.x
 	self.prevy = self.y
 
-	if self.direction == directions.left then
-		self.x = self.x - self.xvelocity * dt
-	else
-		self.x = self.x + self.xvelocity * dt
-	end
-
-	-- decrease the velocity, no matter what direction we are going
-	-- self.xvelocity = math.max(self.xvelocity - 10 * dt, 0)
-
+	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
 	self.dy = self.dy + 9
 
@@ -111,12 +81,12 @@ function Lava:checkParticleBounds()
 	-- Whether there is gravity or not, invert the dx of the particle.
 	if self.x < 0 then
 		self.x = 0
-		self.direction = directions.right
+		self.dx = -self.dx
 	end
 
 	if self.x + self.size >= love.graphics.getWidth() then
 		self.x = love.graphics.getWidth() - self.size
-		self.direction = directions.left
+		self.dx = -self.dx
 	end
 
 	if self.y <= 0 then

@@ -7,13 +7,13 @@ end
 
 function Particle:collidesWithLeftOf(otherParticle)
 	return
-		self.prevx + self.size < otherParticle.x
-		and self.x >= otherParticle.x
+		self.prevx + self.size <= otherParticle.x
+		and self.x + self.size >= otherParticle.x
 end
 
 function Particle:collidesWithRightOf(otherParticle)
 	return
-		self.prevx > otherParticle.x + otherParticle.size
+		self.prevx >= otherParticle.x + otherParticle.size
 		and self.x <= otherParticle.x + otherParticle.size
 end
 
