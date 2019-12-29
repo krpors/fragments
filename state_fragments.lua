@@ -4,6 +4,7 @@ require("emitter")
 require("hydrogen")
 require("oxygen")
 require("lava")
+require("block")
 
 -- A ParticleFactory is merely a simple container with a name and the generator
 -- function for creating new particles. This generator function can then be
@@ -34,8 +35,12 @@ function StateFragments:_init()
 	-- The emitters placed on the screen.
 	self.placedEmitters = {}
 
+	self.placedBlocks = {}
+
 	-- The grid which is used for broad-phased collision detection.
 	self.spatialGrid = SpatialGrid()
+
+	self.statusPlaceBlock = false
 
 	self.mousePosition = {
 		x = 0,
@@ -46,12 +51,22 @@ end
 
 function StateFragments:mousePressed(x, y, button, istouch, presses)
 	if button == 1 then
-		-- Create a new Emitter, using the generator function of the current
-		-- factory so it starts spewing stuff at the given x,y position.
-		local e = Emitter(self.currentParticleFactory.generatorFunction)
-		e:emitAt(x, y)
-		e:setEmitting(true)
-		table.insert(self.placedEmitters, e)
+		if self.statusPlaceBlock then
+			local b = Block()
+			b.x = x
+			b.y = y
+			table.insert(self.placedBlocks, b)
+			-- 1. add 'block' to a different table?
+			-- 2. update/draw the blocks.
+			-- 3. check for collisions with particles.
+		else
+			-- Create a new Emitter, using the generator function of the current
+			-- factory so it starts spewing stuff at the given x,y position.
+			local e = Emitter(self.currentParticleFactory.generatorFunction)
+			e:emitAt(x, y)
+			e:setEmitting(true)
+			table.insert(self.placedEmitters, e)
+		end
 	end
 end
 
@@ -81,6 +96,8 @@ function StateFragments:keyPressed(key)
 	elseif key == 'd' then
 		print(self.spatialGrid.particleCount)
 		self.spatialGrid:print()
+	elseif key == 'b' then
+		self.statusPlaceBlock = not self.statusPlaceBlock
 	elseif key == 'p' then
 		self.paused = not self.paused
 	elseif key == 'k' then
@@ -111,6 +128,10 @@ function StateFragments:update(dt)
 		end
 	end
 
+	for _, block in ipairs(self.placedBlocks) do
+		self.spatialGrid:addParticle(block)
+	end
+
 	self.spatialGrid:checkCollisions()
 end
 
@@ -119,6 +140,10 @@ function StateFragments:draw()
 
 	for i, emitter in ipairs(self.placedEmitters) do
 		emitter:draw()
+	end
+
+	for _, v in ipairs(self.placedBlocks) do
+		v:draw()
 	end
 
 	love.graphics.setFont(globals.gameFont)

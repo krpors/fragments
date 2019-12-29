@@ -76,6 +76,7 @@ function SpatialGrid:checkCollisions()
 				for j = i + 1, #particles do
 					local particle1 = particles[i]
 					local particle2 = particles[j]
+
 					if particle1:collidesWith(particle2) then
 						particle1:handleCollision(particle2)
 						particle2:handleCollision(particle1)
