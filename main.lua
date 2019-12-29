@@ -21,7 +21,7 @@ function love.load()
 
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	-- love.mouse.setVisible(false)
-	-- effect = love.graphics.newShader("shaders/radialblur.frag")
+	-- effect = love.graphics.newShader("shaders/boxblur.frag")
 	-- effect = love.graphics.newShader("shaders/moonshine.frag")
 	canvas = love.graphics.newCanvas(800, 600)
 end

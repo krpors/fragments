@@ -1,7 +1,8 @@
 require("class")
 
 -- Block is just a block which can be placed on the map to contain particles
--- and crap.
+-- and crap. It is 'compliant' with the particle 'interface', but does not
+-- have any logic. Yet.
 Block = class()
 
 function Block:_init()
@@ -15,6 +16,7 @@ function Block:_init()
 end
 
 function Block:handleCollision(otherParticle)
+    -- this particle does not have logic for collision
 end
 
 function Block:collidesWith(otherParticle)

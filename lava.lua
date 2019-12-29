@@ -1,6 +1,7 @@
 require("class")
+require("particle")
 
-Lava = class()
+Lava = class(Particle)
 
 local directions = {
 	left = 0,
@@ -58,6 +59,8 @@ function Lava:handleCollision(otherParticle)
 			self.y = otherParticle.y - self.size - 0.1
 		end
 
+
+
 		-- Self is left of the other particle, check velocities.
 		if self.x < otherParticle.x and self.direction == directions.right then
 			self.direction = directions.left
@@ -65,38 +68,18 @@ function Lava:handleCollision(otherParticle)
 			self.direction = directions.right
 		end
 
-		-- if self.x < otherParticle.x then
-		-- 	-- we are moving to the right, meaning we must have hit a particle
-		-- 	-- to the right of us.
-		-- 	if self.direction == directions.right then
-		-- 		-- bounce back
-		-- 		self.direction = directions.left
-		-- 	-- moving to the left, so a particle with a greater speed than us
-		-- 	-- hit us, from the right.
-		-- 	else
-		-- 	end
-		-- -- self is to the right of the particle.
-		-- elseif self.x > otherParticle.x then
-		-- 	-- we are moving to the right, and we are hit from the left by a
-		-- 	-- particle with a greater velocity.
-		-- 	if self.direction == directions.right then
-		-- 	-- we are moving to the left, bounce
-		-- 	else
-		-- 		self.direction = directions.right
-		-- 	end
-		-- end
 	end
 end
 
--- Returns true when this particle collides with another particle
-function Lava:collidesWith(otherParticle)
-	-- just do a simple bounding box collision detection
-	return
-		    self.x < otherParticle.x + otherParticle.size
-		and otherParticle.x < self.x + self.size
-		and self.y < otherParticle.y + otherParticle.size
-		and otherParticle.y < self.y + self.size - 1
-end
+-- -- Returns true when this particle collides with another particle
+-- function Lava:collidesWith(otherParticle)
+-- 	-- just do a simple bounding box collision detection
+-- 	return
+-- 		    self.x < otherParticle.x + otherParticle.size
+-- 		and otherParticle.x < self.x + self.size
+-- 		and self.y < otherParticle.y + otherParticle.size
+-- 		and otherParticle.y < self.y + self.size - 1
+-- end
 
 -- A particle knows how to update itself every iteration.
 function Lava:update(dt)
