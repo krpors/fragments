@@ -4,6 +4,7 @@ require("spatialgrid")
 require("state_particleplayer")
 require("state_fragments")
 require("state_tester")
+require("state_kaleidoscope")
 
 globals = {
 	gamefont = nil
@@ -83,6 +84,8 @@ function love.keypressed(key)
 		gamestate = StateFragments()
 	elseif key == 'f3' then
 		gamestate = StateTester()
+	elseif key == 'f4' then
+		gamestate = StateKaleidoscope()
 	elseif key == 'r' then
 		status, message = love.graphics.validateShader(false, "shaders/boxblur.frag")
 		print(status)
