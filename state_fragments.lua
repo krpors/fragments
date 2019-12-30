@@ -61,8 +61,8 @@ function StateFragments:mousePressed(x, y, button, istouch, presses)
 	if button == 1 then
 		if self.statusPlaceBlock then
 			local b = Block()
-			b.x = x
-			b.y = y
+			b.x = x - (b.size / 2.0)
+			b.y = y - (b.size / 2.0)
 			table.insert(self.placedBlocks, b)
 			-- 1. add 'block' to a different table?
 			-- 2. update/draw the blocks.
