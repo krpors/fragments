@@ -24,7 +24,7 @@ function StateTester:_init()
 	self.p1 = Lava()
 	self.p1.x = 150
 	self.p1.y = 500
-	self.p1.dx = -30
+	self.p1.dx = -150
 
 	self.p2 = Lava()
 	self.p2.x = 200

@@ -9,7 +9,7 @@ function Lava:_init()
 	self.maxlife = 60
 	self.life = self.maxlife
 
-	self.size = 8
+	self.size = 4
 
 	self.x = 0
 	self.y = 0
@@ -24,10 +24,11 @@ function Lava:_init()
 end
 
 function Lava:__tostring()
-	local s = [[Lava (%d, %d)
-- Life   = %f
-- Dx, Dy = (%2d, %2d)]]
-	return string.format(s, self.x, self.y, self.life, self.dx, self.dy)
+	return string.format("Lava (%d, %d (prev: %d, %d), dx: %d, dy: %d)", self.x, self.y, self.prevx, self.prevy, self.dx, self.dy)
+-- 	local s = [[Lava (%d, %d)
+-- - Life   = %f
+-- - Dx, Dy = (%2d, %2d)]]
+-- 	return string.format(s, self.x, self.y, self.life, self.dx, self.dy)
 end
 
 function Lava:handleCollision(otherParticle)
@@ -41,19 +42,17 @@ function Lava:handleCollision(otherParticle)
 	if self.name == otherParticle.name then
 		-- is the current particle above the other particle? Then align ourselves
 		-- with the other particle's y axis
-		-- if self.y < otherParticle.y then
-		-- 	self.dy = 0
-		-- 	self.y = otherParticle.y - self.size - 0.1
-		-- end
 		if self:collidesWithTopOf(otherParticle) then
 			self.dy = 0
-			self.y = otherParticle.y - self.size - 0.1
+			self.y = otherParticle.y - self.size - 0.0001
 		end
 
-		if self:collidesWithLeftOf(otherParticle) or self:collidesWithRightOf(otherParticle) then
-			print("yep")
+		if self:collidesWithLeftOf(otherParticle) then
 			self.dx = -self.dx
-			self.x = self.prevx
+		end
+
+		if self:collidesWithRightOf(otherParticle) then
+			self.dx = -self.dx
 		end
 
 	end
