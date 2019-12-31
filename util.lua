@@ -23,6 +23,11 @@ function circular_iter(t)
 	end
 end
 
+-- Linear interpolation function to smooth out movement.
+function lerp(v0, v1, t)
+	return (1 - t) * v0 + t * v1;
+end
+
 -- Clamp the given `val' between the `min` and `max' values. For example,
 -- `clamp(-12, 0, 255)' will return 0, and `clamp(933, 0, 255)' will return 255.
 function clamp(val, min, max)

@@ -29,7 +29,7 @@ function StateTester:_init()
 	self.p2 = Lava()
 	self.p2.x = 200
 	self.p2.y = 480
-	self.p2.dx = -100
+	self.p2.dx = -50
 	self.p2.color = {1, 0,0, 1}
 
 end

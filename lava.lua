@@ -6,10 +6,10 @@ Lava = class(Particle)
 function Lava:_init()
 	self.name = "Lava"
 
-	self.maxlife = 60
+	self.maxlife = 20
 	self.life = self.maxlife
 
-	self.size = 4
+	self.size = 8
 
 	self.x = 0
 	self.y = 0
@@ -17,7 +17,7 @@ function Lava:_init()
 	self.prevx = 0
 	self.prevy = 0
 
-	self.dx = love.math.random(-100, 100)
+	self.dx = love.math.random(-600, 600)
 	self.dy = love.math.random(0, 80)
 
 	self.color = { 1, 0, 0, 1 }
@@ -34,9 +34,23 @@ end
 function Lava:handleCollision(otherParticle)
 	if otherParticle.name == "Block" then
 		self.dy = 0
-		self.x = self.prevx
-		self.y = self.prevy
-		return
+		-- self.x = self.prevx
+		-- self.y = self.prevy
+
+		if self:collidesWithTopOf(otherParticle) then
+			self.dy = 0
+		end
+
+		if self:collidesWithLeftOf(otherParticle) then
+			self.dx = -self.dx
+			self.dx = lerp(self.dx, 0, 0.2)
+			self.x = self.prevx
+		end
+
+		if self:collidesWithRightOf(otherParticle) then
+			self.dx = -self.dx
+			self.x = self.prevx
+		end
 	end
 
 	if self.name == otherParticle.name then
@@ -44,7 +58,8 @@ function Lava:handleCollision(otherParticle)
 		-- with the other particle's y axis
 		if self:collidesWithTopOf(otherParticle) then
 			self.dy = 0
-			self.y = otherParticle.y - self.size - 0.0001
+			-- self.y = otherParticle.y - self.size - 1
+			self.y = self.prevy
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
@@ -66,6 +81,9 @@ function Lava:update(dt)
 
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
+
+	-- self.dx = lerp(self.dx, 0, 0.01)
+
 	self.dy = self.dy + 9
 
 	-- Diminish the life by the time delta.
@@ -112,7 +130,7 @@ function Lava:draw()
 	local color = { 1, 1, heightpercentage, 1}
 
 	love.graphics.setColor(color)
-	love.graphics.rectangle('fill', self.x, self.y, size, size)
+	love.graphics.rectangle('line', self.x, self.y, size, size)
 	-- love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
 
 	-- love.graphics.setDefaultFilter("nearest", "nearest", 1)

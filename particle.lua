@@ -36,5 +36,5 @@ function Particle:collidesWith(otherParticle)
 			self.x < otherParticle.x + otherParticle.size
 		and otherParticle.x < self.x + self.size
 		and self.y < otherParticle.y + otherParticle.size
-		and otherParticle.y < self.y + self.size - 1
+		and otherParticle.y < self.y + self.size
 end

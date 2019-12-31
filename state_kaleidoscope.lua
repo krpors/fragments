@@ -36,6 +36,7 @@ function StateKaleidoscope:mouseReleased(x, y, button, istouch, presses)
 end
 
 function StateKaleidoscope:mouseMoved(x, y, dx, dy, istouch)
+	self.pressed = true
 	self.mousePosition = {x = x, y = y}
 end
 
