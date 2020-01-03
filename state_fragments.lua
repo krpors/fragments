@@ -6,6 +6,7 @@ require("oxygen")
 require("lava")
 require("block")
 require("plant")
+require("smoke")
 
 -- A ParticleFactory is merely a simple container with a name and the generator
 -- function for creating new particles. This generator function can then be
@@ -27,6 +28,7 @@ function StateFragments:_init()
 	table.insert(self.particleFactories, ParticleFactory("lava", function() return Lava() end ))
 	table.insert(self.particleFactories, ParticleFactory("oxygen", function() return Oxygen() end ))
 	table.insert(self.particleFactories, ParticleFactory("plant", function() return Plant() end ))
+	table.insert(self.particleFactories, ParticleFactory("smoke", function() return Smoke() end ))
 
 	-- The circular iterator and the current selected particle factory.
 	self.nextParticleFactory = circular_iter(self.particleFactories)
@@ -58,6 +60,9 @@ function StateFragments:_init()
 
 end
 
+function StateFragments:spawnFunction(particle)
+	print("spawning", particle)
+end
 
 function StateFragments:mousePressed(x, y, button, istouch, presses)
 	if button == 1 then

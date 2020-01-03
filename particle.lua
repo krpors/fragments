@@ -38,3 +38,7 @@ function Particle:collidesWith(otherParticle)
 		and self.y < otherParticle.y + otherParticle.size
 		and otherParticle.y < self.y + self.size
 end
+
+function Particle:spawnParticle(func)
+	func()
+end
