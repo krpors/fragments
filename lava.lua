@@ -17,10 +17,15 @@ function Lava:_init()
 	self.prevx = 0
 	self.prevy = 0
 
-	self.dx = love.math.random(-600, 600)
-	self.dy = love.math.random(0, 80)
+	self.dx = love.math.random(-200, 200)
+	self.dy = love.math.random(-50, 0)
 
-	self.color = { 1, 0, 0, 1 }
+	self.color = {
+		1,
+		love.math.random(),
+		0,
+		1,
+	 }
 end
 
 function Lava:__tostring()
@@ -39,11 +44,12 @@ function Lava:handleCollision(otherParticle)
 
 		if self:collidesWithTopOf(otherParticle) then
 			self.dy = 0
+			self.y = self.prevy
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
 			self.dx = -self.dx
-			self.dx = lerp(self.dx, 0, 0.2)
+			self.dx = lerp(self.dx, 0, 0.5)
 			self.x = self.prevx
 		end
 
@@ -82,7 +88,7 @@ function Lava:update(dt)
 	self.x = self.x + self.dx * dt
 	self.y = self.y + self.dy * dt
 
-	-- self.dx = lerp(self.dx, 0, 0.01)
+	self.dx = lerp(self.dx, 0, 0.01)
 
 	self.dy = self.dy + 9
 
@@ -120,23 +126,9 @@ function Lava:checkParticleBounds()
 end
 
 function Lava:draw()
-	local percentageLife = self.life / self.maxlife
-	-- self.color[4] = percentageLife
-
-	local size = self.size-- + percentageLife
-
-	local heightpercentage = self.y / love.graphics.getHeight()
-
-	local color = { 1, 1, heightpercentage, 1}
-
-	love.graphics.setColor(color)
-	love.graphics.rectangle('line', self.x, self.y, size, size)
-	-- love.graphics.circle('fill', self.x, self.y, self.size * percentageLife)
-
-	-- love.graphics.setDefaultFilter("nearest", "nearest", 1)
-	-- love.graphics.setFont(globals.gameFont)
-	-- love.graphics.setColor({1,1,1,1})
-	-- love.graphics.print(string.format("%s", self), math.floor(self.x), math.floor(self.y - 40))
+	local lifeperc = self.life / self.maxlife
+	love.graphics.setColor(self.color)
+	love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
 end
 
 -- =============================================================================

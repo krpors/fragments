@@ -37,10 +37,16 @@ end
 
 function StateKaleidoscope:mouseMoved(x, y, dx, dy, istouch)
 	self.pressed = true
-	self.mousePosition = {x = x, y = y}
+	self.mousePosition = { x = x, y = y }
 end
 
 function StateKaleidoscope:mouseWheelMoved(x, y)
+	self.color = {
+		love.math.random(),
+		love.math.random(),
+		love.math.random(),
+		1
+	}
 end
 
 function StateKaleidoscope:keyPressed(key)

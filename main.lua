@@ -76,7 +76,7 @@ function love.keypressed(key)
 	if key == 'escape' then
 		love.event.quit()
 	elseif key == 'f' then
-		love.window.setFullscreen(true, "desktop")
+		love.window.setFullscreen(not love.window.getFullscreen(), "desktop")
 		canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
 	elseif key == 'f1' then
 		gamestate = StateParticlePlayer()
