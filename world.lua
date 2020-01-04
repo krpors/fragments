@@ -19,19 +19,15 @@ function World:_init()
 	-- The grid which is used for broad-phased collision detection.
 	self.spatialGrid = SpatialGrid()
 
-	-- testing:
-	local smokeEmitter = Emitter(function() return Smoke() end )
-	smokeEmitter:emitAt(100, 200)
-	smokeEmitter.expires = true
-	smokeEmitter.life = 2
-	smokeEmitter:setEmitting(true)
-	self:addEmitter(smokeEmitter)
 end
 
 function World:addBlock(x, y)
 	local b = Block()
-	b.x = x - (b.size / 2.0)
-	b.y = y - (b.size / 2.0)
+	b.x = math.floor(x / b.size) * b.size
+	b.y = math.floor(y / b.size) * b.size
+
+	print(string.format("Placing block at %3d, $3d", b.x, b.y))
+
 	table.insert(self.placedBlocks, b)
 end
 

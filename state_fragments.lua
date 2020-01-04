@@ -121,4 +121,11 @@ function StateFragments:draw()
 	end
 
 	love.graphics.print(debugstr, 0, 0)
+
+	if self.statusPlaceBlock then
+		love.graphics.setColor({1, 1, 1, 1})
+		local x = math.floor(self.mousePosition.x / 16.0) * 16.0
+		local y = math.floor(self.mousePosition.y / 16.0) * 16.0
+		love.graphics.rectangle("line", x, y, 16, 16)
+	end
 end

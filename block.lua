@@ -15,6 +15,11 @@ function Block:_init()
     self.color = { 1, 0.5, 0.2, 1}
 end
 
+function Block:__eq(a, b)
+    print("eqing")
+    return true
+end
+
 function Block:handleCollision(otherParticle)
     -- this particle does not have logic for collision
 end

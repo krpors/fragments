@@ -6,7 +6,7 @@ Smoke = class(Particle)
 function Smoke:_init()
 	self.name = "Smoke"
 
-	self.maxlife = 5
+	self.maxlife = 3
 	self.life = self.maxlife
 
 	self.size = 8
@@ -29,6 +29,10 @@ end
 
 function Smoke:handleCollision(otherParticle)
 	-- smoke does not collide
+	if otherParticle.name == "Block" then
+		self.x = self.prevx
+		self.y = self.prevy
+	end
 end
 
 -- A particle knows how to update itself every iteration.
@@ -75,9 +79,10 @@ end
 
 function Smoke:draw()
 	local percentageLife = self.life / self.maxlife
+	local size = 8 * percentageLife
 	self.color = { percentageLife, percentageLife, percentageLife, 1}
 	love.graphics.setColor(self.color)
-	love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
+	love.graphics.rectangle('fill', self.x, self.y, size, size)
 end
 
 -- =============================================================================
