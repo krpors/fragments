@@ -5,7 +5,6 @@ function SpatialGrid:_init()
 	-- Size of the grid (amount of dividers)
 	self.gridSize = 4
 	self.mousePosition = {0, 0}
-	self.obstacles = {}
 
 	self.particleCount = 0
 	self.grid = {}
@@ -46,6 +45,7 @@ function SpatialGrid:getCellAt(x, y)
 end
 
 function SpatialGrid:addParticle(particle)
+	-- TODO: optimize grid based on amount of particles in each cell or some such
 	self.particleCount = self.particleCount + 1
 
 	-- cell at the topleft
@@ -119,18 +119,6 @@ function SpatialGrid:getCrud()
 	}
 end
 
-function SpatialGrid:placeObstacle(x, y)
-	table.insert(self.obstacles, {x = x, y = y})
-end
-
-function SpatialGrid:drawObstacles()
-	for i, k in ipairs(self.obstacles) do
-		local posx = math.floor(k.x / self.gridSize) * self.gridSize
-		local posy = math.floor(k.y / self.gridSize) * self.gridSize
-		love.graphics.rectangle("fill", posx, posy, self.gridSize, self.gridSize)
-	end
-end
-
 -- For debugging purposes: draw the densities of each cell in the grid.
 function SpatialGrid:drawDensities()
 	-- #self.grid[cell.row][cell.col]
@@ -172,5 +160,4 @@ end
 function SpatialGrid:draw()
 	-- self:drawDensities()
 	self:drawGrid()
-	self:drawObstacles()
 end

@@ -75,7 +75,7 @@ end
 
 function Smoke:draw()
 	local percentageLife = self.life / self.maxlife
-	self.color[2] = percentageLife
+	self.color = { percentageLife, percentageLife, percentageLife, 1}
 	love.graphics.setColor(self.color)
 	love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
 end

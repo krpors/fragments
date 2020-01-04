@@ -3,6 +3,7 @@ require("class")
 Particle = class()
 
 function Particle:_init()
+	self.collidable = true
 end
 
 function Particle:collidesWithLeftOf(otherParticle)
@@ -31,14 +32,11 @@ end
 
 -- Returns true when this particle collides with another particle
 function Particle:collidesWith(otherParticle)
+
 	-- just do a simple bounding box collision detection
 	return
 			self.x < otherParticle.x + otherParticle.size
 		and otherParticle.x < self.x + self.size
 		and self.y < otherParticle.y + otherParticle.size
 		and otherParticle.y < self.y + self.size
-end
-
-function Particle:spawnParticle(func)
-	func()
 end

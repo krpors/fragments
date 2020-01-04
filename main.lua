@@ -54,7 +54,6 @@ end
 
 function love.mousepressed(x, y, button, istouch, presses)
 	print(string.format("Click on %d, %d", x, y))
-	-- grid:placeObstacle(x, y)
 
 	gamestate:mousePressed(x, y, button, istouch, presses)
 end

@@ -20,6 +20,13 @@ function Emitter:_init(generator)
 	self.generator = generator
 	self.multiplier = 1
 	self.particleTimer = 0
+	-- if expires is set to true, the emitter has a lifetime. If false,
+	-- the emitter will not stop emitting.
+	self.expires = false
+	-- The life of the emitter in seconds.
+	self.life = 300
+	-- World reference where this emitter is placed onto.
+	self.world = nil
 	-- The origin of the emitter:
 	self.origin = {
 		x = 0,
@@ -42,9 +49,16 @@ end
 function Emitter:addNewParticle()
 	-- Create a new particle from the generator function.
 	local particle = self:generator()
+	particle.world = self.world
 	particle.x = self.origin.x
 	particle.y = self.origin.y
 	table.insert(self.particles, particle)
+end
+
+-- Returns true if the emitter is expired, meaning: the emitter is at its EOL,
+-- and all particles in the emitter are gone as well.
+function Emitter:isExpired()
+	return #self.particles <= 0 and self.life <= 0
 end
 
 function Emitter:update(dt)
@@ -53,7 +67,15 @@ function Emitter:update(dt)
 	-- new particles to the table.
 	if self.emitting and self.particleTimer >= 0.2 then
 		self.particleTimer = 0
-		self:addNewParticle()
+
+		-- only spawn new particles when the emitter is still alive.
+		if self.life > 0 then
+			self:addNewParticle()
+		end
+	end
+
+	if self.expires then
+		self.life = self.life - dt
 	end
 
 	-- Update every particle.

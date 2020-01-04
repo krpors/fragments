@@ -42,6 +42,12 @@ function Plant:handleCollision(otherParticle)
 
 	if otherParticle.name == "Lava" then
 		self.life = 0
+		local smokeEmitter = Emitter(function() return Smoke() end )
+		smokeEmitter:emitAt(self.x, self.y)
+		smokeEmitter:setEmitting(true)
+		smokeEmitter.life = 1
+		smokeEmitter.expires = true
+		self.world:addEmitter(smokeEmitter)
 	end
 end
 
