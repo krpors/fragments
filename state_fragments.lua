@@ -44,6 +44,22 @@ function StateFragments:_init()
 		y = 0,
 	}
 
+	local p1 = Particle()
+	p1.x = 10
+	p1.y = 10
+	p1.size = 5
+
+	local p2 = Particle()
+	p2.x = 13
+	p2.y = 10
+	p2.size = 5
+
+	if p1:collidesWith(p2) then
+		local perc1 = p2:overlapRatioWith(p1)
+		local perc2 = p1:overlapRatioWith(p2)
+		print(perc1, perc2)
+	end
+
 	self.world = World()
 end
 

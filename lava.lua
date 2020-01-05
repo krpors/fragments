@@ -76,6 +76,12 @@ function Lava:handleCollision(otherParticle)
 			self.dx = -self.dx
 		end
 
+		-- if during collision the particles still overlap by a certain
+		-- ratio, move ourselves upwards.
+		if self:overlapRatioWith(otherParticle) >= 0.4 then
+			self.dx = love.math.random(-200, 200)
+			self.y = self.y - self.size
+		end
 	end
 end
 

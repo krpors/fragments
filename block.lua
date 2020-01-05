@@ -12,7 +12,7 @@ function Block:_init()
     self.x = 0
     self.y = 0
 
-    self.color = { 1, 0.5, 0.2, 1}
+    self.color = { 1, 1, 1, 1}
 end
 
 function Block:__eq(a, b)
