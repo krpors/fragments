@@ -2,12 +2,12 @@ require("class")
 require("world")
 require("spatialgrid")
 require("emitter")
-require("hydrogen")
-require("oxygen")
-require("lava")
-require("block")
-require("plant")
-require("smoke")
+require("particles/hydrogen")
+require("particles/oxygen")
+require("particles/lava")
+require("particles/block")
+require("particles/plant")
+require("particles/smoke")
 
 -- A ParticleFactory is merely a simple container with a name and the generator
 -- function for creating new particles. This generator function can then be

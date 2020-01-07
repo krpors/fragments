@@ -1,10 +1,10 @@
 require("class")
 require("spatialgrid")
 require("emitter")
-require("hydrogen")
-require("oxygen")
-require("lava")
-require("block")
+require("particles/hydrogen")
+require("particles/oxygen")
+require("particles/lava")
+require("particles/block")
 
 StateTester = class()
 

@@ -37,6 +37,7 @@ end
 
 function StateKaleidoscope:mouseMoved(x, y, dx, dy, istouch)
 	self.pressed = true
+	self.mousePrevious = { x = self.mousePosition.x + dx, y = self.mousePosition.y + dy}
 	self.mousePosition = { x = x, y = y }
 end
 
@@ -85,7 +86,6 @@ function StateKaleidoscope:update(dt)
 			x = clamp(self.mousePosition.x + self.direction.x, 0, love.graphics.getWidth()),
 			y = clamp(self.mousePosition.y + self.direction.y, 0, love.graphics.getHeight())
 		}
-		-- print(self.mousePosition.x, self.mousePosition.y)
 	end
 end
 

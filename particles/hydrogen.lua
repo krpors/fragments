@@ -1,4 +1,5 @@
 require("class")
+
 Hydrogen = class()
 
 function Hydrogen:_init()

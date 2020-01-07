@@ -1,12 +1,12 @@
 require("class")
 require("spatialgrid")
 require("emitter")
-require("hydrogen")
-require("oxygen")
-require("lava")
-require("block")
-require("plant")
-require("smoke")
+require("particles/hydrogen")
+require("particles/oxygen")
+require("particles/lava")
+require("particles/block")
+require("particles/plant")
+require("particles/smoke")
 
 -- World contains the emitters and such.
 World = class()

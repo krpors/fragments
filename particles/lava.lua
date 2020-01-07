@@ -1,5 +1,5 @@
 require("class")
-require("particle")
+require("particles/particle")
 
 Lava = class(Particle)
 
