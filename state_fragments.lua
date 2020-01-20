@@ -61,6 +61,35 @@ function StateFragments:_init()
 	end
 
 	self.world = World()
+
+
+	self.world:addBlock(11 * 16, 5 * 16)
+	self.world:addBlock(12 * 16, 5 * 16)
+	self.world:addBlock(13 * 16, 5 * 16)
+	self.world:addBlock(14 * 16, 5 * 16)
+	self.world:addBlock(15 * 16, 5 * 16)
+
+	self.world:addBlock(11 * 16, 6 * 16)
+	self.world:addBlock(11 * 16, 7 * 16)
+	self.world:addBlock(11 * 16, 8 * 16)
+
+	self.world:addBlock(15 * 16, 6 * 16)
+	self.world:addBlock(15 * 16, 7 * 16)
+	self.world:addBlock(15 * 16, 8 * 16)
+
+	self.world:addBlock(11 * 16, 8 * 16)
+	self.world:addBlock(12 * 16, 8 * 16)
+	self.world:addBlock(13 * 16, 8 * 16)
+
+	local e = Emitter(self.particleFactories[2].generatorFunction)
+	e:emitAt(208, 100)
+	e:setEmitting(true)
+	self.world:addEmitter(e)
+
+	local e = Emitter(self.particleFactories[2].generatorFunction)
+	e:emitAt(208, 100)
+	e:setEmitting(true)
+	-- self.world:addEmitter(e)
 end
 
 function StateFragments:mousePressed(x, y, button, istouch, presses)

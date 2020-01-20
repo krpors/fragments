@@ -38,24 +38,28 @@ end
 
 function Lava:handleCollision(otherParticle)
 	if otherParticle.name == "Block" then
-		self.dy = 0
 		-- self.x = self.prevx
 		-- self.y = self.prevy
 
 		if self:collidesWithTopOf(otherParticle) then
 			self.dy = 0
-			self.y = self.prevy
+			self.y = otherParticle.y - self.size - 0.1
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
+			self.x = otherParticle.x - self.size - 0.1
 			self.dx = -self.dx
-			self.dx = lerp(self.dx, 0, 0.5)
-			self.x = self.prevx
+			-- self.dx = lerp(self.dx, 0, 0.5)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
+			self.x = otherParticle.x + otherParticle.size + 0.1
 			self.dx = -self.dx
-			self.x = self.prevx
+		end
+
+		if self:collidesWithBottomOf(otherParticle) then
+			self.dy = 0
+			self.y = otherParticle.y + otherParticle.size + 0.1
 		end
 	end
 

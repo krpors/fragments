@@ -18,7 +18,6 @@ function World:_init()
 
 	-- The grid which is used for broad-phased collision detection.
 	self.spatialGrid = SpatialGrid()
-
 end
 
 function World:addBlock(x, y)
