@@ -139,7 +139,7 @@ function SpatialGrid:drawDensities()
 end
 
 function SpatialGrid:drawGrid()
-	love.graphics.setColor(0.4, 0.4, 0.4, 0.5)
+	love.graphics.setColor(0, 1, 0, 0.6)
 	love.graphics.setLineStyle("rough")
 	love.graphics.setLineWidth(1)
 

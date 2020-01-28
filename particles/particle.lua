@@ -36,10 +36,10 @@ function Particle:collidesWith(otherParticle)
 
 	-- just do a simple bounding box collision detection
 	return
-			self.x < otherParticle.x + otherParticle.size
-		and otherParticle.x < self.x + self.size
-		and self.y < otherParticle.y + otherParticle.size
-		and otherParticle.y < self.y + self.size
+			self.x <= otherParticle.x + otherParticle.size
+		and otherParticle.x <= self.x + self.size
+		and self.y <= otherParticle.y + otherParticle.size
+		and otherParticle.y <= self.y + self.size
 end
 
 -- This function calculates the amount the particles overlap, if there is a

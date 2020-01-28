@@ -33,6 +33,7 @@ function Plant:handleCollision(otherParticle)
 		self.dy = 0
 		self.x = self.prevx
 		self.y = self.prevy
+		return
 	end
 
 	if self.name == otherParticle.name then

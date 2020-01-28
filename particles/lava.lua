@@ -38,54 +38,56 @@ end
 
 function Lava:handleCollision(otherParticle)
 	if otherParticle.name == "Block" then
-		-- self.x = self.prevx
-		-- self.y = self.prevy
-
 		if self:collidesWithTopOf(otherParticle) then
 			self.dy = 0
-			self.y = otherParticle.y - self.size - 0.1
+			self.y = otherParticle.y - self.size - 0.02
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
-			self.x = otherParticle.x - self.size - 0.1
+			self.x = otherParticle.x - self.size - 1
 			self.dx = -self.dx
 			-- self.dx = lerp(self.dx, 0, 0.5)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
-			self.x = otherParticle.x + otherParticle.size + 0.1
+			self.x = otherParticle.x + otherParticle.size + 1
 			self.dx = -self.dx
 		end
 
 		if self:collidesWithBottomOf(otherParticle) then
 			self.dy = 0
-			self.y = otherParticle.y + otherParticle.size + 0.1
+			self.y = otherParticle.y + otherParticle.size + 1
 		end
+
 	end
 
 	if self.name == otherParticle.name then
 		-- is the current particle above the other particle? Then align ourselves
 		-- with the other particle's y axis
 		if self:collidesWithTopOf(otherParticle) then
+			-- otherParticle.dy = otherParticle.dy + self.dy
 			self.dy = 0
-			-- self.y = otherParticle.y - self.size - 1
+			self.y = otherParticle.y - self.size
 			self.y = self.prevy
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
-			self.dx = -self.dx
+			self.dx = -self.dx + 9
+			self.dx = lerp(self.dx, 0, 0.01)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
-			self.dx = -self.dx
+			self.dx = -self.dx - 9
+			self.dx = lerp(self.dx, 0, 0.01)
 		end
 
 		-- if during collision the particles still overlap by a certain
 		-- ratio, move ourselves upwards.
-		if self:overlapRatioWith(otherParticle) >= 0.4 then
-			self.dx = love.math.random(-200, 200)
-			self.y = self.y - self.size
-		end
+		-- if self:overlapRatioWith(otherParticle) >= 0.4 then
+		-- 	-- self.dx = love.math.random(-200, 200)
+		-- 	self.y = self.y - self.size
+		-- 	self.dy = 0
+		-- end
 	end
 end
 
@@ -103,9 +105,11 @@ function Lava:update(dt)
 	self.dy = self.dy + 9
 
 	-- Diminish the life by the time delta.
-    self.life = self.life - dt
+	self.life = self.life - dt
 
-    self:checkParticleBounds()
+	self.color[2] = 1 - (self.life / self.maxlife)
+
+	self:checkParticleBounds()
 end
 
 -- Will check the particle bounds, and if the window edges are hit, invert
