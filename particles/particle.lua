@@ -1,8 +1,13 @@
 require("class")
+require("vector")
 
 Particle = class()
 
 function Particle:_init()
+	self.pos = Vector(0, 0)
+	self.vel = Vector(0, 0)
+	self.acc = Vector(0, 0)
+
 	self.collidable = true
 	self.collisionCounter = 0
 end

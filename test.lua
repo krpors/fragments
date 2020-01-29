@@ -2,17 +2,15 @@ require("class")
 require("spatialgrid")
 
 require("particles/particle")
+require("vector")
 
-Particle = class()
-function Particle:hello()
-    print("hello from partricle")
-end
-Stuff = class(Particle)
-function Stuff:hello()
-    print("asdasds")
-end
 
-a = Particle()
+v1 = Vector(-1, 2)
+v2 = Vector(-4, 1)
 
-s = Stuff()
-s:hello()
+print(v1:magnitude())
+print(v2:magnitude())
+
+v3 = v1 + v2
+
+print(v3.x, v3.y)

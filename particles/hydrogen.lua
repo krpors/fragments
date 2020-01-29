@@ -1,6 +1,8 @@
 require("class")
+require("particles/particle")
+require("vector")
 
-Hydrogen = class()
+Hydrogen = class(Particle)
 
 function Hydrogen:_init()
 	self.name = "Hydrogen"
@@ -9,6 +11,9 @@ function Hydrogen:_init()
 	self.life = self.maxlife
 
 	self.size = 5
+
+	self.pos = Vector(300, 300)
+	self.vel = Vector(love.math.random(-90, 90), love.math.random(-90, 90))
 
 	self.x = 0
 	self.y = 0
@@ -26,44 +31,16 @@ function Hydrogen:__tostring()
 	return string.format("Hydrogen (%d, %d), life: %f", self.x, self.y, self.life)
 end
 
-function Hydrogen:moveToPreviousPosition()
-	self.x = self.prevx
-	self.y = self.prevy
-end
-
-function Hydrogen:moveInRandomDirection()
-	self.x = self.x + love.math.random(-0.5, 0.5) * self.size
-	self.y = self.y + love.math.random(-0.5, 0.5) * self.size
-end
-
 function Hydrogen:handleCollision(otherParticle)
-	if otherParticle.is_a[Hydrogen] then
-		self:moveInRandomDirection()
-	elseif otherParticle.is_a[Oxygen] then
+	if otherParticle.is_a[Oxygen] then
 		self.dx = 0
 		self.dy = 0
 		self.life = 0
 	end
 end
 
--- Returns true when this particle collides with another particle
-function Hydrogen:collidesWith(otherParticle)
-	-- just do a simple bounding box collision detection
-	return
-		    self.x < otherParticle.x + otherParticle.size
-		and otherParticle.x < self.x + self.size
-		and self.y < otherParticle.y + otherParticle.size
-		and otherParticle.y < self.y + self.size
-end
-
--- A particle knows how to update itself every iteration.
 function Hydrogen:update(dt)
-	-- first make sure we have the previous positions saved
-	self.prevx = self.x
-	self.prevy = self.y
-
-	self.x = self.x + self.dx * dt
-	self.y = self.y + self.dy * dt
+	self.pos = self.pos + (self.vel * dt)
 
 	-- Diminish the life by the time delta.
     self.life = self.life - dt
@@ -108,7 +85,8 @@ function Hydrogen:draw()
 
 	love.graphics.setColor(self.color)
 	local size = self.size * percentageLife
-	love.graphics.circle('fill', self.x, self.y, size)
+	-- love.graphics.circle('fill', self.x, self.y, size)
+	love.graphics.circle('fill', self.pos.x, self.pos.y, size)
 	-- love.graphics.rectangle('fill', self.x, self.y, size, size)
 end
 

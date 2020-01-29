@@ -72,12 +72,10 @@ function Lava:handleCollision(otherParticle)
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
-			self.dx = -self.dx + 9
 			self.dx = lerp(self.dx, 0, 0.01)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
-			self.dx = -self.dx - 9
 			self.dx = lerp(self.dx, 0, 0.01)
 		end
 
