@@ -49,9 +49,9 @@ function SpatialGrid:addParticle(particle)
 	self.particleCount = self.particleCount + 1
 
 	-- cell at the topleft
-	local min = self:getCellAt(particle.x, particle.y)
+	local min = self:getCellAt(particle.pos.x, particle.pos.y)
 	-- cell at the bottom right
-	local max = self:getCellAt(particle.x + particle.size, particle.y + particle.size)
+	local max = self:getCellAt(particle.pos.x + particle.size, particle.pos.y + particle.size)
 
 	-- Don't go out of bounds.
 	max.col = math.min(self.gridSize, max.col)

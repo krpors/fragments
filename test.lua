@@ -4,7 +4,6 @@ require("spatialgrid")
 require("particles/particle")
 require("vector")
 
-
 v1 = Vector(-1, 2)
 v2 = Vector(-4, 1)
 

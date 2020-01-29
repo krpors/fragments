@@ -11,14 +11,10 @@ function Lava:_init()
 
 	self.size = 8
 
-	self.x = 0
-	self.y = 0
-
-	self.prevx = 0
-	self.prevy = 0
-
-	self.dx = love.math.random(-200, 200)
-	self.dy = love.math.random(-50, 0)
+	self.pos = Vector(0, 0)
+	self.prevpos = Vector(0, 0)
+	self.vel = Vector(love.math.random(-200, 200), 0)
+	self.acc = Vector(0, 9)
 
 	self.color = {
 		1,
@@ -29,34 +25,30 @@ function Lava:_init()
 end
 
 function Lava:__tostring()
-	return string.format("Lava (%d, %d (prev: %d, %d), dx: %d, dy: %d)", self.x, self.y, self.prevx, self.prevy, self.dx, self.dy)
--- 	local s = [[Lava (%d, %d)
--- - Life   = %f
--- - Dx, Dy = (%2d, %2d)]]
--- 	return string.format(s, self.x, self.y, self.life, self.dx, self.dy)
+	return string.format("Lava (%d, %d (prev: %d, %d), dx: %d, dy: %d)", self.pos.x, self.pos.y, self.prevx, self.prevy, self.dx, self.dy)
 end
 
 function Lava:handleCollision(otherParticle)
 	if otherParticle.name == "Block" then
 		if self:collidesWithTopOf(otherParticle) then
-			self.dy = 0
-			self.y = otherParticle.y - self.size - 0.02
+			self.vel.y = 0
+			self.pos.y = otherParticle.pos.y - self.size - 0.02
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
-			self.x = otherParticle.x - self.size - 1
-			self.dx = -self.dx
+			self.pos.x = otherParticle.pos.x - self.size - 1
+			-- self.dx = -self.dx
 			-- self.dx = lerp(self.dx, 0, 0.5)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
-			self.x = otherParticle.x + otherParticle.size + 1
-			self.dx = -self.dx
+			self.pos.x = otherParticle.pos.x + otherParticle.size + 1
+			-- self.dx = self.dx * -1
 		end
 
 		if self:collidesWithBottomOf(otherParticle) then
-			self.dy = 0
-			self.y = otherParticle.y + otherParticle.size + 1
+			self.vel.y = 0
+			self.pos.y = otherParticle.pos.y + otherParticle.size + 1
 		end
 
 	end
@@ -66,41 +58,31 @@ function Lava:handleCollision(otherParticle)
 		-- with the other particle's y axis
 		if self:collidesWithTopOf(otherParticle) then
 			-- otherParticle.dy = otherParticle.dy + self.dy
-			self.dy = 0
-			self.y = otherParticle.y - self.size
-			self.y = self.prevy
+			self.vel.y = 0
+			self.pos.y = otherParticle.pos.y - self.size
+			self.pos = self.prevpos
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
-			self.dx = lerp(self.dx, 0, 0.01)
+			self.vel.x = self.vel.x * -1
+			self.vel.x = lerp(self.vel.x, 0, 0.1)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
-			self.dx = lerp(self.dx, 0, 0.01)
+			self.vel.x = self.vel.x * -1
+			self.vel.x = lerp(self.vel.x, 0, 0.1)
 		end
 
-		-- if during collision the particles still overlap by a certain
-		-- ratio, move ourselves upwards.
-		-- if self:overlapRatioWith(otherParticle) >= 0.4 then
-		-- 	-- self.dx = love.math.random(-200, 200)
-		-- 	self.y = self.y - self.size
-		-- 	self.dy = 0
-		-- end
 	end
 end
 
 -- A particle knows how to update itself every iteration.
 function Lava:update(dt)
 	-- first make sure we have the previous positions saved
-	self.prevx = self.x
-	self.prevy = self.y
+	self.prevpos = self.pos
 
-	self.x = self.x + self.dx * dt
-	self.y = self.y + self.dy * dt
-
-	self.dx = lerp(self.dx, 0, 0.01)
-
-	self.dy = self.dy + 9
+	self.pos = self.pos + self.vel * dt
+	self.vel = self.vel + (self.acc)
 
 	-- Diminish the life by the time delta.
 	self.life = self.life - dt
@@ -114,33 +96,33 @@ end
 -- the delta's, when applicable.
 function Lava:checkParticleBounds()
 	-- Whether there is gravity or not, invert the dx of the particle.
-	if self.x < 0 then
-		self.x = 0
-		self.dx = -self.dx
+	if self.pos.x < 0 then
+		self.pos.x = 0
+		self.vel.x = self.vel.x * -1
 	end
 
-	if self.x + self.size >= love.graphics.getWidth() then
-		self.x = love.graphics.getWidth() - self.size
-		self.dx = -self.dx
+	if self.pos.x + self.size >= love.graphics.getWidth() then
+		self.pos.x = love.graphics.getWidth() - self.size
+		self.vel.x = self.vel.x * -1
 	end
 
-	if self.y <= 0 then
-		self.y = self.size
-		self.dy = math.abs(self.dy)
+	if self.pos.y <= 0 then
+		self.pos.y = self.size
+		self.vel.y = math.abs(self.vel.y)
 	end
 
 	-- Check if the self goes beyond the screen's height.
-	if self.y + self.size >= love.graphics.getHeight() then
+	if self.pos.y + self.size >= love.graphics.getHeight() then
 		-- First 'clamp' the value to the maximum height.
-		self.y = love.graphics.getHeight() - self.size
-		self.dy = 0
+		self.pos.y = love.graphics.getHeight() - self.size
+		self.vel.y = 0
 	end
 end
 
 function Lava:draw()
 	local lifeperc = self.life / self.maxlife
 	love.graphics.setColor(self.color)
-	love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
+	love.graphics.rectangle('fill', self.pos.x, self.pos.y, self.size, self.size)
 end
 
 -- =============================================================================

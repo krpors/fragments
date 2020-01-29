@@ -3,37 +3,28 @@ require("vector")
 
 Particle = class()
 
-function Particle:_init()
-	self.pos = Vector(0, 0)
-	self.vel = Vector(0, 0)
-	self.acc = Vector(0, 0)
-
-	self.collidable = true
-	self.collisionCounter = 0
-end
-
 function Particle:collidesWithLeftOf(otherParticle)
 	return
-		self.prevx + self.size < otherParticle.x
-		and self.x + self.size > otherParticle.x
+		self.prevpos.x + self.size < otherParticle.pos.x
+		and self.pos.x + self.size > otherParticle.pos.x
 end
 
 function Particle:collidesWithRightOf(otherParticle)
 	return
-		self.prevx > otherParticle.x + otherParticle.size
-		and self.x < otherParticle.x + otherParticle.size
+		self.prevpos.x > otherParticle.pos.x + otherParticle.size
+		and self.pos.x < otherParticle.pos.x + otherParticle.size
 end
 
 function Particle:collidesWithTopOf(otherParticle)
 	return
-		self.prevy + self.size < otherParticle.y
-		and self.y + self.size > otherParticle.y
+		self.prevpos.y + self.size < otherParticle.pos.y
+		and self.pos.y + self.size > otherParticle.pos.y
 end
 
 function Particle:collidesWithBottomOf(otherParticle)
 	return
-		self.prevy > otherParticle.y + otherParticle.size
-		and self.y < otherParticle.y + otherParticle.size
+		self.prevpos.y > otherParticle.pos.y + otherParticle.size
+		and self.pos.y < otherParticle.pos.y + otherParticle.size
 end
 
 -- Returns true when this particle collides with another particle
@@ -41,10 +32,10 @@ function Particle:collidesWith(otherParticle)
 
 	-- just do a simple bounding box collision detection
 	return
-			self.x <= otherParticle.x + otherParticle.size
-		and otherParticle.x <= self.x + self.size
-		and self.y <= otherParticle.y + otherParticle.size
-		and otherParticle.y <= self.y + self.size
+			self.pos.x <= otherParticle.pos.x + otherParticle.size
+		and otherParticle.pos.x <= self.pos.x + self.size
+		and self.pos.y <= otherParticle.pos.y + otherParticle.size
+		and otherParticle.pos.y <= self.pos.y + self.size
 end
 
 -- This function calculates the amount the particles overlap, if there is a
@@ -54,15 +45,15 @@ function Particle:overlapRatioWith(otherParticle)
 	local selfArea = self.size * self.size
 	local otherArea = otherParticle.size * otherParticle.size
 
-	local x1 = self.x
-	local x2 = self.x + self.size
-	local x3 = otherParticle.x
-	local x4 = otherParticle.x + otherParticle.size
+	local x1 = self.pos.x
+	local x2 = self.pos.x + self.size
+	local x3 = otherParticle.pos.x
+	local x4 = otherParticle.pos.x + otherParticle.size
 
-	local y1 = self.y
-	local y2 = self.y + self.size
-	local y3 = otherParticle.y
-	local y4 = otherParticle.y + otherParticle.size
+	local y1 = self.pos.y
+	local y2 = self.pos.y + self.size
+	local y3 = otherParticle.pos.y
+	local y4 = otherParticle.pos.y + otherParticle.size
 
 	local width = math.max(x1, x3) - math.min(x2, x4)
 	local height = math.max(y1, y3) - math.min(y2, y4)

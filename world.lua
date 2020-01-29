@@ -22,10 +22,10 @@ end
 
 function World:addBlock(x, y)
 	local b = Block()
-	b.x = math.floor(x / b.size) * b.size
-	b.y = math.floor(y / b.size) * b.size
+	b.pos.x = math.floor(x / b.size) * b.size
+	b.pos.y = math.floor(y / b.size) * b.size
 
-	print(string.format("Placing block at %3d, $3d", b.x, b.y))
+	print(string.format("Placing block at %3d, $3d", b.pos.x, b.pos.y))
 
 	table.insert(self.placedBlocks, b)
 end

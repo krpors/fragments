@@ -9,8 +9,10 @@ function Block:_init()
     self.name = "Block"
 
     self.size = 16
-    self.x = 0
-    self.y = 0
+
+    self.pos = Vector(0, 0)
+    self.prevpos = Vector(0, 0)
+	self.vel = Vector(0, 0)
 
     self.color = { 1, 1, 1, 0.9}
 end
@@ -32,5 +34,5 @@ end
 
 function Block:draw()
     love.graphics.setColor(self.color)
-    love.graphics.rectangle('fill', self.x, self.y, self.size, self.size)
+    love.graphics.rectangle('fill', self.pos.x, self.pos.y, self.size, self.size)
 end

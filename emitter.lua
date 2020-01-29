@@ -39,10 +39,7 @@ function Emitter:setEmitting(bool)
 end
 
 function Emitter:emitAt(x, y)
-	self.origin = {
-		x = x,
-		y = y
-	}
+	self.origin = Vector(x, y)
 end
 
 -- Adds a new particle to the table.
@@ -50,8 +47,7 @@ function Emitter:addNewParticle()
 	-- Create a new particle from the generator function.
 	local particle = self:generator()
 	particle.world = self.world
-	particle.x = self.origin.x
-	particle.y = self.origin.y
+	particle.pos = Vector(self.origin.x, self.origin.y)
 	table.insert(self.particles, particle)
 end
 
