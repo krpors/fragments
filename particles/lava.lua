@@ -73,6 +73,10 @@ function Lava:handleCollision(otherParticle)
 			self.vel.x = lerp(self.vel.x, 0, 0.1)
 		end
 
+		if self:overlapRatioWith(otherParticle) >= 0.8 then
+			self.vel.x = love.math.random(-200, 200)
+			self.vel.y = -20
+		end
 	end
 end
 
