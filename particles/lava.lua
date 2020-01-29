@@ -25,25 +25,26 @@ function Lava:_init()
 end
 
 function Lava:__tostring()
-	return string.format("Lava (%d, %d (prev: %d, %d), dx: %d, dy: %d)", self.pos.x, self.pos.y, self.prevx, self.prevy, self.dx, self.dy)
+	return string.format("Lava")
 end
 
 function Lava:handleCollision(otherParticle)
 	if otherParticle.name == "Block" then
 		if self:collidesWithTopOf(otherParticle) then
 			self.vel.y = 0
-			self.pos.y = otherParticle.pos.y - self.size - 0.02
+			self.pos.y = otherParticle.pos.y - self.size - 1
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
 			self.pos.x = otherParticle.pos.x - self.size - 1
+			self.vel.x = self.vel.x * -1
 			-- self.dx = -self.dx
 			-- self.dx = lerp(self.dx, 0, 0.5)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
 			self.pos.x = otherParticle.pos.x + otherParticle.size + 1
-			-- self.dx = self.dx * -1
+			self.vel.x = self.vel.x * -1
 		end
 
 		if self:collidesWithBottomOf(otherParticle) then
@@ -64,18 +65,20 @@ function Lava:handleCollision(otherParticle)
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
+			-- self.vel.x = self.vel.x + otherParticle.vel.x
 			self.vel.x = self.vel.x * -1
 			self.vel.x = lerp(self.vel.x, 0, 0.1)
 		end
 
 		if self:collidesWithRightOf(otherParticle) then
+			-- self.vel.x = self.vel.x + otherParticle.vel.x
 			self.vel.x = self.vel.x * -1
 			self.vel.x = lerp(self.vel.x, 0, 0.1)
 		end
 
-		if self:overlapRatioWith(otherParticle) >= 0.8 then
+		if self:overlapRatioWith(otherParticle) >= 0.6 then
 			self.vel.x = love.math.random(-200, 200)
-			self.vel.y = -20
+			self.vel.y = love.math.random(-30, -15)
 		end
 	end
 end
