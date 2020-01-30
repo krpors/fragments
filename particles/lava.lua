@@ -13,7 +13,7 @@ function Lava:_init()
 
 	self.pos = Vector(0, 0)
 	self.prevpos = Vector(0, 0)
-	self.vel = Vector(love.math.random(-200, 200), 0)
+	self.vel = Vector(love.math.random(-10, 10), 0)
 	self.acc = Vector(0, 9)
 
 	self.color = {
@@ -60,8 +60,9 @@ function Lava:handleCollision(otherParticle)
 		if self:collidesWithTopOf(otherParticle) then
 			-- otherParticle.dy = otherParticle.dy + self.dy
 			self.vel.y = 0
-			self.pos.y = otherParticle.pos.y - self.size
-			self.pos = self.prevpos
+			self.pos.y = otherParticle.pos.y - self.size - 1
+			return
+			-- self.pos = self.prevpos
 		end
 
 		if self:collidesWithLeftOf(otherParticle) then
@@ -76,9 +77,15 @@ function Lava:handleCollision(otherParticle)
 			self.vel.x = lerp(self.vel.x, 0, 0.1)
 		end
 
-		if self:overlapRatioWith(otherParticle) >= 0.6 then
-			self.vel.x = love.math.random(-200, 200)
-			self.vel.y = love.math.random(-30, -15)
+		if self:collidesWithBottomOf(otherParticle) then
+			-- self.vel.x = self.vel.x + otherParticle.vel.x
+			self.vel.y = 0
+			-- self.vel.x = lerp(self.vel.x, 0, 0.1)
+		end
+
+		if self:overlapRatioWith(otherParticle) >= 0.5 then
+			self.vel.x = love.math.random(-50, 50)
+			self.vel.y = love.math.random(-40, 9)
 		end
 	end
 end

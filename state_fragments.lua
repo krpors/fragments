@@ -47,9 +47,9 @@ function StateFragments:_init()
 	self.world = World()
 
 	self.world:addBlock(11 * 16, 5 * 16)
-	self.world:addBlock(12 * 16, 5 * 16)
-	self.world:addBlock(13 * 16, 5 * 16)
-	self.world:addBlock(14 * 16, 5 * 16)
+	-- self.world:addBlock(12 * 16, 5 * 16)
+	-- self.world:addBlock(13 * 16, 5 * 16)
+	-- self.world:addBlock(14 * 16, 5 * 16)
 	self.world:addBlock(15 * 16, 5 * 16)
 
 	self.world:addBlock(11 * 16, 6 * 16)
