@@ -11,6 +11,14 @@ function Vector:magnitude()
     return math.sqrt(math.pow(self.x, 2) + math.pow(self.y, 2))
 end
 
+-- lerp will do a linear interpolation of both the x and ycomponents of the
+-- vector, which can be used to slowly lower or heighten the magnitude of
+-- the vector.
+function Vector:lerp(v1, t)
+    self.x = lerp(self.x, v1, t)
+    self.y = lerp(self.y, v1, t)
+end
+
 function Vector:__add(other)
     return Vector(self.x + other.x, self.y + other.y)
 end

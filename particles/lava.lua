@@ -95,7 +95,7 @@ function Lava:update(dt)
 	-- first make sure we have the previous positions saved
 	self.prevpos = self.pos
 
-	-- Update  the position by adding the velocity vector to the current position.
+	-- Update the position by adding the velocity vector to the current position.
 	self.pos = self.pos + self.vel * dt
 	-- Then apply force (gravity) to the velocity vector.
 	self.vel = self.vel + (self.acc)
