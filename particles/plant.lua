@@ -26,7 +26,6 @@ end
 
 function Plant:handleCollision(otherParticle)
 	if otherParticle.name == "Block" then
-		self.vel.y = 0
 		self.pos = self.prevpos
 		return
 	end

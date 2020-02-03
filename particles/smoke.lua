@@ -11,38 +11,32 @@ function Smoke:_init()
 
 	self.size = 8
 
-	self.x = 0
-	self.y = 0
-
-	self.prevx = 0
-	self.prevy = 0
-
-	self.dx = love.math.random(-20, 20)
-	self.dy = love.math.random(-150, -60)
+	self.pos = Vector(0, 0)
+	self.prevpos = Vector(0, 0)
+	self.vel = Vector(love.math.random(-20, 20), love.math.random(-150, -60))
+	self.acc = Vector(0, -1)
 
 	self.color = { 0.7, 0.7, 0.7, love.math.random() }
 end
 
 function Smoke:__tostring()
-	return string.format("Smoke (%d, %d (prev: %d, %d), dx: %d, dy: %d)", self.x, self.y, self.prevx, self.prevy, self.dx, self.dy)
+	return string.format("Smoke (%d, %d (prev: %d, %d), dx: %d, dy: %d)", self.pos.x, self.pos.y, self.prevx, self.prevy, self.vel.x, self.vel.y)
 end
 
 function Smoke:handleCollision(otherParticle)
 	-- smoke does not collide
 	if otherParticle.name == "Block" then
-		self.x = self.prevx
-		self.y = self.prevy
+		self.pos = self.prevpos
 	end
 end
 
 -- A particle knows how to update itself every iteration.
 function Smoke:update(dt)
 	-- first make sure we have the previous positions saved
-	self.prevx = self.x
-	self.prevy = self.y
+	self.prevpos = self.pos
 
-	self.x = self.x + self.dx * dt
-	self.y = self.y + self.dy * dt
+	self.pos = self.pos + self.vel * dt
+	self.vel = self.vel + (self.acc)
 
 	-- Diminish the life by the time delta.
     self.life = self.life - dt
@@ -54,35 +48,34 @@ end
 -- the delta's, when applicable.
 function Smoke:checkParticleBounds()
 	-- Whether there is gravity or not, invert the dx of the particle.
-	if self.x < 0 then
-		self.x = 0
-		self.dx = -self.dx
+	if self.pos.x < 0 then
+		self.pos.x = 0
 	end
 
-	if self.x + self.size >= love.graphics.getWidth() then
-		self.x = love.graphics.getWidth() - self.size
-		self.dx = -self.dx
+	if self.pos.x + self.size >= love.graphics.getWidth() then
+		self.pos.x = love.graphics.getWidth() - self.size
 	end
 
-	if self.y <= 0 then
-		self.y = 0
-		self.dy = 0
+	if self.pos.y <= 0 then
+		self.pos.y = 0
+		self.vel.y = 0
 	end
 
 	-- Check if the self goes beyond the screen's height.
-	if self.y + self.size >= love.graphics.getHeight() then
+	if self.pos.y + self.size >= love.graphics.getHeight() then
 		-- First 'clamp' the value to the maximum height.
-		self.y = love.graphics.getHeight() - self.size
-		self.dy = 0
+		self.pos.y = love.graphics.getHeight() - self.size
+		self.vel.y = 0
 	end
 end
 
 function Smoke:draw()
 	local percentageLife = self.life / self.maxlife
-	local size = 8 * percentageLife
+	-- local size = 8 * percentageLife
+	local size = 8-- * percentageLife
 	self.color = { percentageLife, percentageLife, percentageLife, 1}
 	love.graphics.setColor(self.color)
-	love.graphics.rectangle('fill', self.x, self.y, size, size)
+	love.graphics.rectangle('fill', self.pos.x, self.pos.y, size, size)
 end
 
 -- =============================================================================
