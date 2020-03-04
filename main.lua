@@ -5,6 +5,7 @@ require("state_particleplayer")
 require("state_fragments")
 require("state_tester")
 require("state_kaleidoscope")
+require("state_derp")
 
 globals = {
 	gamefont = nil
@@ -85,6 +86,8 @@ function love.keypressed(key)
 		gamestate = StateTester()
 	elseif key == 'f4' then
 		gamestate = StateKaleidoscope()
+	elseif key == 'f5' then
+		gamestate = StateDerp()
 	elseif key == 'r' then
 		status, message = love.graphics.validateShader(false, "shaders/boxblur.frag")
 		print(status)

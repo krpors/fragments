@@ -37,8 +37,9 @@ function Plant:handleCollision(otherParticle)
 	end
 
 	if self.name == otherParticle.name then
-		self.x = self.x + love.math.random(-self.size, self.size)
-		self.y = self.y + love.math.random(-self.size, self.size)
+		-- self.vel = Vector(love.math.random(-100, 100), love.math.random(-100, 100))
+		-- self.vel.x = self.vel.x + otherParticle.vel.x
+		-- self.vel.y = self.vel.y + otherParticle.vel.y
 	end
 
 	if otherParticle.name == "Lava" then
